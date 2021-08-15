@@ -1,0 +1,64 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Conversation {
+  id         Int      @id @default(autoincrement())
+  context    Int
+  answer     String
+  type       String
+  isStarted  Boolean  @default(false) @map("is_started")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+  employee   Employee @relation(fields: [employeeId], references: [id])
+  employeeId Int      @map("employee_id")
+
+  @@map(name: "conversations")
+}
+
+model TemporaryConversation {
+  id         Int      @id @default(autoincrement())
+  context    Int
+  answer     String
+  type       String
+  isStarted  Boolean  @default(false) @map("is_started")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+  from       String
+  
+  @@map(name: "temporary_conversations")
+}
+
+model Employee {
+  id            Int             @id @default(autoincrement())
+  name          String
+  score         Int             @default(0)
+  code          Int?
+  conversation  Conversation[]
+  employeeToken EmployeeToken[]
+  createdAt     DateTime        @default(now()) @map("created_at")
+  updatedAt     DateTime        @updatedAt @map("updated_at")
+
+  @@map(name: "employees")
+}
+
+model EmployeeToken {
+  id         Int      @id @default(autoincrement())
+  name       String
+  token      String
+  employee   Employee @relation(fields: [employeeId], references: [id])
+  employeeId Int      @map("employee_id")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  @@map(name: "employee_token")
+}

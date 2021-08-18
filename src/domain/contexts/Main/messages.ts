@@ -1,23 +1,33 @@
+import { Failure, Foward, Message } from "../../contracts/chatbot.interface";
+
+const onTeach: Omit<Foward, 'context'> = {
+  message: 'Preciso de algumas informações...',
+  fowardTo: 2,
+  delay: 0
+}
+
+const onQuestion: Omit<Foward, 'context'> = {
+  message: 'Ok, vamos lá...',
+  fowardTo: 3,
+  delay: 0
+}
+
+const onInvalidOption: Omit<Failure, 'context'> = {
+  message: 'Opção inválida!',
+  delay: 0,
+  error: new Error('Opção inválida!')
+}
+
+const onInit: Omit<Message, 'context'> = {
+  message: 'Você deseja (1 - ensinar) ou (2 - perguntar)?',
+  delay: 0 
+}
+
 export default {
   onActivity: {
-    onSuccess: {
-      message: 'Você Está no menu principal!',
-      context: 1,
-      delay: 0
-    },
-    onFailed: {
-      message: 'Erro no menu principal!',
-      error: new Error(),
-      delay: 0
-    }
+    onTeach,
+    onQuestion,
+    onInvalidOption
   },
-  onInit: {
-    message: 'Você acaba de entrar no menu principal!',
-    delay: 0
-  },
-  onFinish: {
-    message: 'Você saiu do menu principal!',
-    delay: 0
-  }
+  onInit,
 };
-  

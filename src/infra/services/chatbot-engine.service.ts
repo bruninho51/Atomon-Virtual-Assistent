@@ -1,44 +1,40 @@
-
-import { Message, Input, Context } from "../../domain/contracts/chatbot.interface";
+import { Input, Speak, Foward, Response } from "../../domain/contracts/chatbot.interface";
 import { getContext } from "../../domain/hooks/get-context.hook";
 import { Conversation } from "../../domain/models/conversation";
 
 export class ChatbotEngineService {
-  public async execute (input: Input, conversation?: Conversation): Promise<Message[]> {
-    const messages: Message[] = [];
-    let context = conversation?.context ?? 0;
+  public async execute (input: Input, conversation?: Conversation): Promise<Response> {
+    let resultContexts: Response = [];
+    const currentContextCode: number = conversation?.context ?? 0;
+    const alreadyStarted: boolean = conversation?.isStarted ?? false;
   
-    if (!conversation?.isStarted) {
-      await this.onInitHelper(await getContext(context), messages);
-    }
-  
-    if (conversation?.isStarted) {
-      const replyMessage = await (await getContext(context)).onActivity(input);
-      if (replyMessage !== null) {
-        messages.push(replyMessage);
-        if (Number.isInteger(replyMessage['context'])) { // is foward message
-          console.log('context: ', replyMessage['context'])
-          await this.onFinishHelper(await getContext(context), messages);
-          context = replyMessage['context'];
-          await this.onInitHelper(await getContext(context), messages);
+    if (alreadyStarted) {
+      const currentContext = await getContext(currentContextCode);
+      const reply = await currentContext.onActivity(input);
+      if (reply) {
+        resultContexts = resultContexts.concat(reply)
+        const foward = reply.find((message: Speak) => !!message['fowardTo']) as Foward
+        if (foward) {
+          const finishReply = await currentContext.onFinish()
+          resultContexts = resultContexts.concat(finishReply);
+          const nextContext = await getContext(foward.fowardTo)
+          const initReply = await nextContext.onInit()
+          resultContexts = resultContexts.concat(initReply);
+          
         }
       }
+    } else {
+      const context = await getContext(currentContextCode)
+      const initReply = await context.onInit();
+      resultContexts = initReply
     }
 
-    return messages;
-  }
-  
-  private async onInitHelper(context: Context, messages: Message[]): Promise<void> {
-    const message = await context.onInit();
-    if (message) {
-      messages.push(message);
-    }
-  }
-  
-  private async onFinishHelper(context: Context, messages: Message[]): Promise<void> {
-    const message = await context.onFinish();
-    if (message) {
-      messages.push(message);
-    }
+    const response = resultContexts.filter(function (speak: Speak) {
+      return speak != null;
+    });
+
+    return response.length != 0
+      ? response
+      : null;
   }
 }

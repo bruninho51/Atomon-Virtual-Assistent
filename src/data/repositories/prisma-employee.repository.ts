@@ -28,7 +28,11 @@ export class PrismaEmployeeRepository implements EmployeeRepository {
         context: conversation.context,
         type: conversation.type,
         isStarted: conversation.isStarted ?? false,
-        employeeId
+        employee: {
+          connect: {
+            id: employeeId
+          }
+        }
       }
     })
     
@@ -44,7 +48,7 @@ export class PrismaEmployeeRepository implements EmployeeRepository {
           employeeId
         },
         orderBy: {
-          createdAt: 'desc'
+          id: 'desc',
         }
       })
       return conversation

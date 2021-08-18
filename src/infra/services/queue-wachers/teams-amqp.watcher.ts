@@ -38,12 +38,8 @@ export class TeamsAmqpWatcher implements MessageReader {
 
       if (employee) {
         conversation = await this.employeeRepository.getLastConversation(employee.id)
-        console.log('employee')
-        console.dir(conversation, { depth: null })
       } else {
         conversation = await this.tempConversationRepository.getLastConversationFrom(activity.from.id)
-        console.log('temporary')
-        console.dir(conversation, { depth: null })
       }
 
       const messages: Message[] = await this.chatbotEngineService.execute({
@@ -58,7 +54,7 @@ export class TeamsAmqpWatcher implements MessageReader {
 
       if (employee) {
         const conversations = messages.map(message => ({
-          context: message['context'] ?? (conversation?.context ?? 0),
+          context: message.context.getContextCode(),
           answer: message.message,
           isStarted: true,
           type: 'plaintext'
@@ -66,7 +62,7 @@ export class TeamsAmqpWatcher implements MessageReader {
         await this.employeeRepository.saveConversations(employee.id, conversations)
       } else {
         const conversations = messages.map(message => ({
-          context: message['context'] ?? (conversation?.context ?? 0),
+          context: message.context.getContextCode(),
           answer: message.message,
           isStarted: true,
           from: activity.from.id,

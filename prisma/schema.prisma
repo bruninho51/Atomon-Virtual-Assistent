@@ -17,6 +17,7 @@ model Conversation {
   answer     String
   type       String
   isStarted  Boolean  @default(false) @map("is_started")
+  typedText  String?   @map("typed_text")
   createdAt  DateTime @default(now()) @map("created_at")
   updatedAt  DateTime @updatedAt @map("updated_at")
   employee   Employee @relation(fields: [employeeId], references: [id])
@@ -26,15 +27,16 @@ model Conversation {
 }
 
 model TemporaryConversation {
-  id         Int      @id @default(autoincrement())
-  context    Int
-  answer     String
-  type       String
-  isStarted  Boolean  @default(false) @map("is_started")
-  createdAt  DateTime @default(now()) @map("created_at")
-  updatedAt  DateTime @updatedAt @map("updated_at")
-  from       String
-  
+  id        Int      @id @default(autoincrement())
+  context   Int
+  answer    String
+  type      String
+  isStarted Boolean  @default(false) @map("is_started")
+  typedText String?   @map("typed_text")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  from      String
+
   @@map(name: "temporary_conversations")
 }
 

@@ -10,4 +10,5 @@ export class EmployeeRepository {
   saveConversation: (employeeId: number, conversation: Conversation) => Promise<Employee>
   saveConversations: (employeeId: number, conversations: Conversation[]) => Promise<Employee>
   getLastConversation: (employeeId: number) => Promise<Conversation>
+  findConversationByCursor: (employeeId: number, cursor: number) => Promise<Conversation>
 }

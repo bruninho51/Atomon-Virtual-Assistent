@@ -12,7 +12,9 @@ import { AmqpProvider } from './infra/providers/amqp.provider'
   const watcher = await makeTeamsAmpqWacher()
   watcher.read()
 
-  app.post('/messages', async (req: express.Request, res: express.Response) => {
+  app.get('/', async (_req, res) => res.end('Ok'))
+
+  app.post('/api/messages', async (req: express.Request, res: express.Response) => {
     const activity = req.body as Activity;
     const conversationReference = TurnContext.getConversationReference(activity);
 

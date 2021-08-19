@@ -29,4 +29,5 @@ export interface Input {
   text: string
   client: Clients
   token: string
+  employeeId: number
 }

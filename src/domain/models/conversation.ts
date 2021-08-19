@@ -3,6 +3,7 @@ export interface Conversation {
     context: number;
     answer: string;
 	type: string;
+	typedText: string;
 	isStarted: boolean;
 	createdAt: Date;
 	updatedAt: Date;

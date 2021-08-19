@@ -5,12 +5,11 @@ import { BotFrameworkProvider } from '../../providers/bot-framework.provider';
 import { RabbitMq } from '../../../config/config';
 import { Clients } from '../../../domain/enums/clients.enum';
 import { MessageReader } from '../../../domain/contracts/message-reader.interface';
-import { Conversation } from '../../../domain/models/conversation';
+import { Conversation, TemporaryConversation } from '../../../domain/models/conversation';
 import {  Message } from '../../../domain/contracts/chatbot.interface';
 import { ChatbotEngineService } from '../chatbot-engine.service';
 import { EmployeeRepository } from '../../../domain/contracts/employee-repository.interface';
 import { TemporaryConversationRepository } from '../../../domain/contracts/temporary_conversation-repository.interface';
-import { TemporaryConversation } from '@prisma/client';
 
 export class TeamsAmqpWatcher implements MessageReader {
   constructor (
@@ -45,7 +44,8 @@ export class TeamsAmqpWatcher implements MessageReader {
       const messages: Message[] = await this.chatbotEngineService.execute({
         text: activity.text,
         token: activity.from.id,
-        client: Clients.teams
+        client: Clients.teams,
+        employeeId: employee?.id
       }, conversation);
 
       if (!employee) {
@@ -57,7 +57,8 @@ export class TeamsAmqpWatcher implements MessageReader {
           context: message.context.getContextCode(),
           answer: message.message,
           isStarted: true,
-          type: 'plaintext'
+          type: 'plaintext',
+          typedText: activity.text,
         }) as Conversation)
         await this.employeeRepository.saveConversations(employee.id, conversations)
       } else {
@@ -66,7 +67,8 @@ export class TeamsAmqpWatcher implements MessageReader {
           answer: message.message,
           isStarted: true,
           from: activity.from.id,
-          type: 'plaintext'
+          type: 'plaintext',
+          typedText: activity.text
         }) as TemporaryConversation)
         await this.tempConversationRepository.saveConversations(conversations)
       }

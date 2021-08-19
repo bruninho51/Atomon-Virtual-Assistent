@@ -23,6 +23,7 @@ export class PrismaTemporaryConversationRepository implements TemporaryConversat
         type: conversation.type,
         isStarted: conversation.isStarted ?? false,
         from: conversation.from,
+        typedText: conversation.typedText
       }  
     })
   }

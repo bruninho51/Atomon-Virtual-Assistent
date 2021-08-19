@@ -7,6 +7,27 @@ import { Conversation } from "../../domain/models/conversation"
 
 export class PrismaEmployeeRepository implements EmployeeRepository {
   constructor (private readonly prismaProvider: PrismaProvider) {}
+  async findConversationByCursor (employeeId: number, cursor: number): Promise<Conversation> {
+    const prisma = await this.prismaProvider.getConnection()
+
+    try {
+      const conversation = await prisma.conversation.findFirst({
+        where: {
+          employeeId
+        },
+        orderBy: {
+          id: 'desc',
+        },
+        skip: cursor,
+        take: 1
+      })
+      return conversation
+    } catch (error) {
+      if (error.name !== 'NotFound') throw error
+    }
+    return null
+  }
+
   async saveConversations (employeeId: number, conversations: Conversation[]): Promise<Employee> {
     let employee: Employee = null
     for (const conversation of conversations) {
@@ -28,6 +49,7 @@ export class PrismaEmployeeRepository implements EmployeeRepository {
         context: conversation.context,
         type: conversation.type,
         isStarted: conversation.isStarted ?? false,
+        typedText: conversation.typedText,
         employee: {
           connect: {
             id: employeeId

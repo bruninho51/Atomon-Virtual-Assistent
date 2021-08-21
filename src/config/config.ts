@@ -21,6 +21,10 @@ export namespace BotFramework {
   export const botPassword = process.env.BOT_PASSWORD
 }
 
+export namespace Elasticsearch {
+  export const url = process.env.ELASTICSEARCH_URL
+}
+
 export namespace RabbitMq {
   export const url = process.env.RABBITMQ_URL
   export const teamsChatbotQueue = process.env.MSTEAMS_CHATBOT_QUEUE

@@ -1,10 +1,10 @@
 import { Context, Response, Input } from '../../contracts/chatbot.interface';
 import { Contexts } from '../../enums/contexts.enum';
 import { createMessage } from '../../hooks/create-message.hook';
-import axios from 'axios';
 import { EmployeeRepository } from '../../contracts/employee-repository.interface';
 import * as cuid from 'cuid';
-import { create } from 'domain';
+import { Elasticsearch } from '../../../config/config';
+import * as elasticsearch from 'elasticsearch'
 
 export class TeachAskKnowledge implements Context {
 
@@ -22,26 +22,35 @@ export class TeachAskKnowledge implements Context {
     const title = (await this.employeeRepository.getLastConversation(input.employeeId)).typedText
     const knowledge = input.text
 
-    const result = await axios.post(`http://localhost:9200/atomon/knowledge/${cuid()}`, {
-      title,
-      knowledge
-    })
+    const client = new elasticsearch.Client({
+      hosts: [Elasticsearch.url]
+    });
 
-    if (result.data.error) {
+    try {
+      await client.create({
+        index: 'atomon',
+        type: 'knowledge',
+        id: cuid(),
+        body: {
+          title,
+          knowledge
+        }
+      })
+
       return createMessage({
         context: this,
-        error: new Error(),
+        fowardTo: 1,
+        message: 'Conhecimento salvo!',
+        delay: 0,
+      })
+    } catch (error) {
+      return createMessage({
+        context: this,
+        error,
         message: 'Desculpe, não consegui salvar o conhecimento.',
         delay: 0,
       })
     }
-
-    return createMessage({
-      context: this,
-      fowardTo: 1,
-      message: 'Conhecimento salvo!',
-      delay: 0,
-    })
   }
 
   public async onInit(): Promise<Response> {

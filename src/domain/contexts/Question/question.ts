@@ -1,7 +1,8 @@
 import { Context, Response, Input } from '../../contracts/chatbot.interface';
 import { Contexts } from '../../enums/contexts.enum';
 import { createMessage } from '../../hooks/create-message.hook';
-import axios from 'axios'
+import * as elasticsearch from 'elasticsearch'
+import { Elasticsearch } from '../../../config/config';
 
 export class Question implements Context {
   constructor (private readonly contextCode: Contexts) {}
@@ -9,12 +10,28 @@ export class Question implements Context {
     return this.contextCode
   }
 
-  public async onActivity(input: Input): Promise<Response> {
-    
-    const { data } = await axios.get(`http://localhost:9200/atomon/_search?q=knowledge:${input.text}`)
-    const { hits } = data.hits
+  public async onActivity(_input: Input): Promise<Response> {
 
-    if (data.hits.total.value === 0) {
+    const client = new elasticsearch.Client({
+      hosts: [Elasticsearch.url]
+    });
+
+    const { hits }: any = await client.search({
+      index: 'atomon',
+      type: 'knowledge',
+      body: {
+        query: {
+          match: {
+            knowledge: {
+              query : _input.text,
+              fuzziness: "AUTO"
+            }
+          },
+        }
+      }
+    })
+    
+    if (hits.total.value === 0) {
       return createMessage({
         context: this,
         message: 'Sinto muito, não sei de nada sobre esse assunto.',
@@ -23,19 +40,10 @@ export class Question implements Context {
       })
     }
 
-    if (data.error) {
-      return createMessage({
-        context: this,
-        error: new Error(),
-        message: 'Humm.. tive um problema ao procurar sobre o assunto. Sinto muito.',
-        delay: 0,
-      })
-    }
-
     const $this = this
-    return hits.map((hit: any) => ({
+    return hits.hits.map((hit: any) => ({
       context: $this,
-      message: `title: ${hit._source.title} | knowledge: ${hit._source.knowledge}`,
+      message: `Título: ${hit._source.title} | Conhecimento: ${hit._source.knowledge}`,
       fowardTo: 1,
       delay: 0,
     }))
@@ -44,7 +52,7 @@ export class Question implements Context {
   public async onInit(): Promise<Response> {
     return createMessage({
       context: this,
-      message: 'Qual a sua pergunta?',
+      message: 'Sobre o que deseja aprender?',
       delay: 0,
     })
   }

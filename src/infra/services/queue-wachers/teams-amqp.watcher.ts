@@ -27,60 +27,68 @@ export class TeamsAmqpWatcher implements MessageReader {
     const channel = await conn.createChannel();
 
     channel.consume(RabbitMq.teamsChatbotQueue, async (message: ConsumeMessage) => {
-      const data = JSON.parse(message.content.toString());
-      const conversationReference = data.conversationReference as ConversationReference;
-      const activity = data.activity as Activity;
 
-      let employee = await this.employeeRepository.findByToken(Clients.teams, activity.from.id)
+      try {
+        const data = JSON.parse(message.content.toString());
+        const conversationReference = data.conversationReference as ConversationReference;
+        const activity = data.activity as Activity;
+  
+        let employee = await this.employeeRepository.findByToken(Clients.teams, activity.from.id)
+  
+        let conversation: Conversation = null
+  
+        if (employee) {
+          conversation = await this.employeeRepository.getLastConversation(employee.id)
+        } else {
+          conversation = await this.tempConversationRepository.getLastConversationFrom(activity.from.id)
+        }
+  
+        const messages: Message[] = await this.chatbotEngineService.execute({
+          text: activity.text,
+          token: activity.from.id,
+          client: Clients.teams,
+          employeeId: employee?.id
+        }, conversation);
+  
+        if (!employee) {
+          employee = await this.employeeRepository.findByToken(Clients.teams, activity.from.id)
+        }
+  
+        if (employee) {
+          const conversations = messages.map(message => ({
+            context: message.context.getContextCode(),
+            answer: message.message,
+            isStarted: true,
+            type: 'plaintext',
+            typedText: activity.text,
+          }) as Conversation)
+          await this.employeeRepository.saveConversations(employee.id, conversations)
+        } else {
+          const conversations = messages.map(message => ({
+            context: message.context.getContextCode(),
+            answer: message.message,
+            isStarted: true,
+            from: activity.from.id,
+            type: 'plaintext',
+            typedText: activity.text
+          }) as TemporaryConversation)
+          await this.tempConversationRepository.saveConversations(conversations)
+        }
+  
+        for (const message of messages) {
+          await botFramework.continueConversation(conversationReference, async (context: TurnContext) => {
+            await context.sendActivities([
+              { type: 'typing' },
+              { type: 'delay', value: message.delay },
+              { text: message.message }
+            ])
+          }); 
+        }
 
-      let conversation: Conversation = null
-
-      if (employee) {
-        conversation = await this.employeeRepository.getLastConversation(employee.id)
-      } else {
-        conversation = await this.tempConversationRepository.getLastConversationFrom(activity.from.id)
-      }
-
-      const messages: Message[] = await this.chatbotEngineService.execute({
-        text: activity.text,
-        token: activity.from.id,
-        client: Clients.teams,
-        employeeId: employee?.id
-      }, conversation);
-
-      if (!employee) {
-        employee = await this.employeeRepository.findByToken(Clients.teams, activity.from.id)
-      }
-
-      if (employee) {
-        const conversations = messages.map(message => ({
-          context: message.context.getContextCode(),
-          answer: message.message,
-          isStarted: true,
-          type: 'plaintext',
-          typedText: activity.text,
-        }) as Conversation)
-        await this.employeeRepository.saveConversations(employee.id, conversations)
-      } else {
-        const conversations = messages.map(message => ({
-          context: message.context.getContextCode(),
-          answer: message.message,
-          isStarted: true,
-          from: activity.from.id,
-          type: 'plaintext',
-          typedText: activity.text
-        }) as TemporaryConversation)
-        await this.tempConversationRepository.saveConversations(conversations)
-      }
-
-      for (const message of messages) {
-        await botFramework.continueConversation(conversationReference, async (context: TurnContext) => {
-          await context.sendActivities([
-            { type: 'typing' },
-            { type: 'delay', value: message.delay },
-            { text: message.message }
-          ])
-        }); 
+        channel.ack(message)
+      } catch (_error) {
+        channel.nack(message, false, false)
+        console.log(_error)
       }
     });
   }

@@ -8,6 +8,7 @@
   "devDependencies": {
     "@types/amqp": "^0.2.5",
     "@types/amqplib": "^0.8.1",
+    "@types/elasticsearch": "^5.0.38",
     "@types/express": "^4.17.13",
     "@types/jest": "~26.0.23",
     "@types/node": "~14.14.45",
@@ -43,6 +44,7 @@
     "botbuilder": "^4.14.1",
     "cuid": "^2.1.8",
     "dotenv": "^10.0.0",
+    "elasticsearch": "^16.7.2",
     "express": "^4.17.1",
     "knex": "^0.21.21",
     "mysql": "^2.18.1",

@@ -14,7 +14,7 @@ import { AmqpProvider } from './infra/providers/amqp.provider'
 
   app.get('/', async (_req, res) => res.end('Ok'))
 
-  app.post('/api/messages', async (req: express.Request, res: express.Response) => {
+  app.post('/messages', async (req: express.Request, res: express.Response) => {
     const activity = req.body as Activity;
     const conversationReference = TurnContext.getConversationReference(activity);
 

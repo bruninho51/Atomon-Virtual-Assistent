@@ -1,5 +1,5 @@
 import { Employee } from "../../domain/models/employee"
-import { Clients } from "../../domain/enums/clients.enum"
+import { Client } from "../../domain/enums/client.enum"
 import { PrismaProvider } from "../../infra/providers/prisma.provider"
 import { EmployeeRepository } from "../../domain/contracts/employee-repository.interface"
 import { EmployeeToken } from "../../domain/models/employee-token"
@@ -98,7 +98,7 @@ export class PrismaEmployeeRepository implements EmployeeRepository {
     return null
   }
 
-  async saveToken (employeeId: number, name: Clients, token: string): Promise<EmployeeToken> {
+  async saveToken (employeeId: number, name: Client, token: string): Promise<EmployeeToken> {
     const prisma = await this.prismaProvider.getConnection()
     const employeeToken = await prisma.employeeToken.create({
       data: {
@@ -110,7 +110,7 @@ export class PrismaEmployeeRepository implements EmployeeRepository {
     return employeeToken
   }
 
-  async findByToken(name: Clients, token: string): Promise<Employee> {
+  async findByToken(name: Client, token: string): Promise<Employee> {
     const prisma = await this.prismaProvider.getConnection()
 
     try {

@@ -1,8 +1,10 @@
-import { Context, Response, Input } from '../../contracts/chatbot.interface';
+import { Context, Response, Input, Foward } from '../../contracts/chatbot.interface';
 import { Contexts } from '../../enums/contexts.enum';
 import { createMessage } from '../../hooks/create-message.hook';
 import * as elasticsearch from 'elasticsearch'
 import { Elasticsearch } from '../../../config/config';
+import { createSimpleCardMessages } from '../../hooks/create-messages.hook';
+import { SimpleCard } from '../../models/simple-card-message';
 
 export class Question implements Context {
   constructor (private readonly contextCode: Contexts) {}
@@ -41,12 +43,18 @@ export class Question implements Context {
     }
 
     const $this = this
-    return hits.hits.map((hit: any) => ({
+    console.dir(hits.hits, { depth: null })
+    const messages = hits.hits.map((hit: any): Foward<SimpleCard> => ({
       context: $this,
-      message: `Título: ${hit._source.title} | Conhecimento: ${hit._source.knowledge}`,
-      fowardTo: 1,
       delay: 0,
+      fowardTo: 1,
+      message: {
+        title: hit._source.title,
+        body: hit._source.knowledge
+      },
     }))
+
+    return createSimpleCardMessages(messages)
   }
 
   public async onInit(): Promise<Response> {

@@ -1,22 +1,24 @@
-import { Clients } from "../enums/clients.enum"
+import { CardType } from "../enums/card-type.enum"
+import { Client } from "../enums/client.enum"
 
-export type Message = {
-  message: string
+export type Message<T = unknown> = {
+  message: T
   delay: number
   context: Context
+  cardType?: CardType
 }
 
-export interface Foward extends Message {
+export interface Foward<T = unknown> extends Message<T> {
   fowardTo: number
 }
 
-export interface Failure extends Message {
+export interface Failure<T = unknown> extends Message<T> {
   error: Error
 }
 
-export type Speak = Message | Foward | Failure
+export type Speak<T = unknown> = Message<T> | Foward<T> | Failure<T>
 
-export type Response = Array<Speak>
+export type Response<T = unknown> = Array<Speak<T>>
 
 export interface Context {
   getContextCode: () => number
@@ -27,7 +29,7 @@ export interface Context {
 
 export interface Input {
   text: string
-  client: Clients
+  client: Client
   token: string
   employeeId: number
 }

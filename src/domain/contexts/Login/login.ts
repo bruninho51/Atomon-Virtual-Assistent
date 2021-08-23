@@ -1,6 +1,6 @@
 import { Context, Response, Input } from '../../contracts/chatbot.interface';
 import { EmployeeRepository } from '../../contracts/employee-repository.interface';
-import { Clients } from '../../enums/clients.enum';
+import { Client } from '../../enums/client.enum';
 import { Contexts } from '../../enums/contexts.enum';
 import { createMessage } from '../../hooks/create-message.hook';
 import LoginMessages from './messages';
@@ -15,10 +15,10 @@ export class Login implements Context {
     return this.contextCode
   }
 
-  public async onActivity(input: Input): Promise<Response> {
+  public async onActivity (input: Input): Promise<Response> {
     const employee = await this.employeeRepository.findByCode(Number(input.text))
     if (employee) {
-      await this.employeeRepository.saveToken(employee.id, Clients.teams, input.token)
+      await this.employeeRepository.saveToken(employee.id, Client.teams, input.token)
       return createMessage({ ...LoginMessages.onActivity.onSuccess, context: this })
     }
     return createMessage({ ...LoginMessages.onActivity.onFailed, context: this })

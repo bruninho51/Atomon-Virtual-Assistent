@@ -1,3 +1,4 @@
+import { BotFrameworkCardBuilder } from "../../../data/cards/bot-framework-card-builder";
 import { MessageReader } from "../../../domain/contracts/message-reader.interface";
 import { AmqpProvider } from "../../../infra/providers/amqp.provider";
 import { BotFrameworkProvider } from "../../../infra/providers/bot-framework.provider";
@@ -12,6 +13,13 @@ export const makeTeamsAmpqWacher = async (): Promise<MessageReader> => {
   const temporaryConversationRepository = await makePrismaTemporaryConversationRepository()
   const rabbitmq = new AmqpProvider()
   const botFramework = new BotFrameworkProvider()
-  const watcher = new TeamsAmqpWatcher(chatbot, rabbitmq, botFramework, employeeRepository, temporaryConversationRepository)
+  const cardBuilder = new BotFrameworkCardBuilder()
+  const watcher = new TeamsAmqpWatcher(
+    chatbot, 
+    rabbitmq, 
+    botFramework, 
+    employeeRepository, 
+    temporaryConversationRepository, 
+    cardBuilder)
   return Promise.resolve(watcher)
 }

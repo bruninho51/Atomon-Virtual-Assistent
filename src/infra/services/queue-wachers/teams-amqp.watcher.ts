@@ -3,13 +3,14 @@ import { Activity, ConversationReference, TurnContext } from 'botbuilder';
 import { AmqpProvider } from '../../providers/amqp.provider';
 import { BotFrameworkProvider } from '../../providers/bot-framework.provider';
 import { RabbitMq } from '../../../config/config';
-import { Clients } from '../../../domain/enums/clients.enum';
+import { Client } from '../../../domain/enums/client.enum';
 import { MessageReader } from '../../../domain/contracts/message-reader.interface';
 import { Conversation, TemporaryConversation } from '../../../domain/models/conversation';
 import {  Message } from '../../../domain/contracts/chatbot.interface';
 import { ChatbotEngineService } from '../chatbot-engine.service';
 import { EmployeeRepository } from '../../../domain/contracts/employee-repository.interface';
 import { TemporaryConversationRepository } from '../../../domain/contracts/temporary_conversation-repository.interface';
+import { CardBuilder } from '../../../domain/contracts/card-builder.interface';
 
 export class TeamsAmqpWatcher implements MessageReader {
   constructor (
@@ -18,6 +19,7 @@ export class TeamsAmqpWatcher implements MessageReader {
     private readonly botFrameworkProvider: BotFrameworkProvider,
     private readonly employeeRepository: EmployeeRepository,
     private readonly tempConversationRepository: TemporaryConversationRepository,
+    private readonly cardBuilder: CardBuilder
   ) {}
 
   public async read(): Promise<void> {
@@ -33,7 +35,7 @@ export class TeamsAmqpWatcher implements MessageReader {
         const conversationReference = data.conversationReference as ConversationReference;
         const activity = data.activity as Activity;
   
-        let employee = await this.employeeRepository.findByToken(Clients.teams, activity.from.id)
+        let employee = await this.employeeRepository.findByToken(Client.teams, activity.from.id)
   
         let conversation: Conversation = null
   
@@ -46,18 +48,19 @@ export class TeamsAmqpWatcher implements MessageReader {
         const messages: Message[] = await this.chatbotEngineService.execute({
           text: activity.text,
           token: activity.from.id,
-          client: Clients.teams,
+          client: Client.teams,
           employeeId: employee?.id
         }, conversation);
   
         if (!employee) {
-          employee = await this.employeeRepository.findByToken(Clients.teams, activity.from.id)
+          employee = await this.employeeRepository.findByToken(Client.teams, activity.from.id)
         }
   
         if (employee) {
+          console.dir(messages, { depth: null })
           const conversations = messages.map(message => ({
             context: message.context.getContextCode(),
-            answer: message.message,
+            answer: typeof message.message === 'object' ? JSON.stringify(message.message) : message.message,
             isStarted: true,
             type: 'plaintext',
             typedText: activity.text,
@@ -66,7 +69,7 @@ export class TeamsAmqpWatcher implements MessageReader {
         } else {
           const conversations = messages.map(message => ({
             context: message.context.getContextCode(),
-            answer: message.message,
+            answer: typeof message.message === 'object' ? JSON.stringify(message.message) : message.message,
             isStarted: true,
             from: activity.from.id,
             type: 'plaintext',
@@ -77,12 +80,26 @@ export class TeamsAmqpWatcher implements MessageReader {
   
         for (const message of messages) {
           await botFramework.continueConversation(conversationReference, async (context: TurnContext) => {
+
+            
+            let activity: Partial<Activity> = null
+            if (message.cardType && typeof message.message === 'object') { // card message
+
+              // criar um builder de factory de card
+              const card = await this.cardBuilder.build(message.cardType, message)
+              activity = { attachments: [card] }
+            } else if (typeof message.message === 'string') { // string message
+              activity = { text: message.message }
+            } else {
+              throw new Error('Invalid message!')
+            }
+
             await context.sendActivities([
               { type: 'typing' },
               { type: 'delay', value: message.delay },
-              { text: message.message }
+              activity
             ])
-          }); 
+          });
         }
 
         channel.ack(message)

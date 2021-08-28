@@ -24,13 +24,11 @@ export class Question implements Context {
       body: {
         query: {
           multi_match: {
-            
             query : _input.text,
             operator: 'and',
             fuzziness: "AUTO",
             analyzer: "atomon_analyzer",
             fields: ["knowledge", "title"]
-            
           },
         }
       }

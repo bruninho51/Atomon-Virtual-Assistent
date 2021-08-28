@@ -80,8 +80,6 @@ export class TeamsAmqpWatcher implements MessageReader {
   
         for (const message of messages) {
           await botFramework.continueConversation(conversationReference, async (context: TurnContext) => {
-
-            
             let activity: Partial<Activity> = null
             if (message.cardType && typeof message.message === 'object') { // card message
 

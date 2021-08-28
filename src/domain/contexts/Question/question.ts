@@ -23,11 +23,14 @@ export class Question implements Context {
       type: 'knowledge',
       body: {
         query: {
-          match: {
-            knowledge: {
-              query : _input.text,
-              fuzziness: "AUTO"
-            }
+          multi_match: {
+            
+            query : _input.text,
+            operator: 'and',
+            fuzziness: "AUTO",
+            analyzer: "atomon_analyzer",
+            fields: ["knowledge", "title"]
+            
           },
         }
       }

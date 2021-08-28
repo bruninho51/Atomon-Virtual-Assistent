@@ -2,8 +2,10 @@ import * as express from 'express'
 import { makeTeamsAmpqWacher } from './main/factories/services/teams-amqp-watcher.factory'
 import { RabbitMq, Server } from './config/config'
 import * as cuid from 'cuid'
-import { Activity, TurnContext } from 'botbuilder'
+import { Activity, Attachment, TurnContext } from 'botbuilder'
 import { AmqpProvider } from './infra/providers/amqp.provider'
+import * as path from 'path'
+import { exec } from 'child_process'
 
 (async function main() {
   const app = express()
@@ -17,6 +19,18 @@ import { AmqpProvider } from './infra/providers/amqp.provider'
   app.post('/api/messages', async (req: express.Request, res: express.Response) => {
     const activity = req.body as Activity;
     const conversationReference = TurnContext.getConversationReference(activity);
+
+    if (activity.attachments) {
+      activity.attachments.forEach((attachment: Attachment) => {
+        const filename = `${attachment.content['uniqueId']}.${attachment.content['fileType']}`
+        const filepath = path.join(process.cwd(), 'tmp', filename);
+
+        console.log(`curl -o "${filepath}" "${attachment.content['downloadUrl']}"`)
+        exec(`curl -o "${filepath}" "${attachment.content['downloadUrl']}"`, (error) => {
+          console.log(error)
+        })
+      })
+    }
 
     const amqp = new AmqpProvider()
     const conn = await amqp.getInstance()

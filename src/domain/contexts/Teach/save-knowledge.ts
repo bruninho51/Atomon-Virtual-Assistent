@@ -9,18 +9,24 @@ import * as cuid from 'cuid';
 export class SaveKnowledge implements Context {
 
   constructor (
-      private readonly contextCode: Contexts,
-      private readonly employeeRepository: EmployeeRepository,
+    private readonly contextCode: Contexts,
+    private readonly employeeRepository: EmployeeRepository,
   ) {}
 
   public getContextCode (): number {
     return this.contextCode
   };
 
-  public async onActivity(_input: Input): Promise<Response> {
+  public async onActivity(input: Input): Promise<Response> {
     // save knowledge on elasticsearch
-    const title = (await this.employeeRepository.getLastConversation(_input.employeeId, Contexts.TeachAskTitle)).typedText
-    const knowledge = (await this.employeeRepository.getLastConversation(_input.employeeId, Contexts.TeachAskKnowledge)).typedText
+    const { getLastConversation } = this.employeeRepository
+    const getConversation = getLastConversation.bind(this.employeeRepository)
+
+    const askTitleContext = await getConversation(input.employeeId, Contexts.TeachAskTitle)
+    const askKnowledgeContext = await getConversation(input.employeeId, Contexts.TeachAskKnowledge)
+
+    const title = askTitleContext.typedText
+    const knowledge = askKnowledgeContext.typedText
 
     const client = new elasticsearch.Client({
       hosts: [Elasticsearch.url]
@@ -53,8 +59,8 @@ export class SaveKnowledge implements Context {
     }
   }
 
-  public async onInit(): Promise<Response> {
-    return this.onActivity({} as Input)
+  public async onInit(input: Input): Promise<Response> {
+    return this.onActivity(input)
   }
 
   public async onFinish(): Promise<Response> {

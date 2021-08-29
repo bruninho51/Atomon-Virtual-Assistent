@@ -6,6 +6,9 @@ import { Main } from "../contexts/Main/main";
 import { TeachAskTitle } from "../contexts/Teach/teach-ask-title";
 import { Question } from "../contexts/Question/question";
 import { TeachAskKnowledge } from "../contexts/Teach/teach-ask-knowledge";
+import { AskAttachment } from "../contexts/Teach/ask-attachment";
+import { Attachment } from "../contexts/Teach/attachment";
+import { SaveKnowledge } from "../contexts/Teach/save-knowledge";
 
 export const getContext = async (context: Contexts): Promise<Context> => {
 
@@ -15,8 +18,11 @@ export const getContext = async (context: Contexts): Promise<Context> => {
     [Contexts.Login]: new Login(Contexts.Login, employeeRepository),
     [Contexts.Main]: new Main(Contexts.Main),
     [Contexts.TeachAskTitle]: new TeachAskTitle(Contexts.TeachAskTitle),
-    [Contexts.TeachAskKnowledge]: new TeachAskKnowledge(Contexts.TeachAskKnowledge, employeeRepository),
-    [Contexts.Question]: new Question(Contexts.Question)
+    [Contexts.TeachAskKnowledge]: new TeachAskKnowledge(Contexts.TeachAskKnowledge),
+    [Contexts.Question]: new Question(Contexts.Question),
+    [Contexts.AskAttachment]: new AskAttachment(Contexts.AskAttachment),
+    [Contexts.Attachment]: new Attachment(Contexts.Attachment),
+    [Contexts.SaveKnowledge]: new SaveKnowledge(Contexts.SaveKnowledge, employeeRepository),
   };
 
   return contexts[context];

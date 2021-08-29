@@ -38,7 +38,7 @@ export class Question implements Context {
       return createMessage({
         context: this,
         message: 'Sinto muito, não sei de nada sobre esse assunto.',
-        fowardTo: 1,
+        fowardTo: Contexts.Main,
         delay: 0,
       })
     }
@@ -48,7 +48,7 @@ export class Question implements Context {
     const messages = hits.hits.map((hit: any): Foward<SimpleCard> => ({
       context: $this,
       delay: 0,
-      fowardTo: 1,
+      fowardTo: Contexts.Main,
       message: {
         title: hit._source.title,
         body: hit._source.knowledge

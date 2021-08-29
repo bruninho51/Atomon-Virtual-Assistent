@@ -1,14 +1,15 @@
 import { Failure, Foward, Message } from "../../contracts/chatbot.interface";
+import { Contexts } from "../../enums/contexts.enum";
 
 const onTeach: Omit<Foward, 'context'> = {
   message: 'Preciso de algumas informações...',
-  fowardTo: 2,
+  fowardTo: Contexts.TeachAskTitle,
   delay: 0
 }
 
 const onQuestion: Omit<Foward, 'context'> = {
   message: 'Ok, vamos lá...',
-  fowardTo: 3,
+  fowardTo: Contexts.Question,
   delay: 0
 }
 

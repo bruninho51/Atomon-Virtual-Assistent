@@ -9,6 +9,6 @@ export class EmployeeRepository {
   saveToken: (employeeId: number, name: Client, token: string) => Promise<EmployeeToken>
   saveConversation: (employeeId: number, conversation: Conversation) => Promise<Employee>
   saveConversations: (employeeId: number, conversations: Conversation[]) => Promise<Employee>
-  getLastConversation: (employeeId: number) => Promise<Conversation>
+  getLastConversation: (employeeId: number, contextId?: number) => Promise<Conversation>
   findConversationByCursor: (employeeId: number, cursor: number) => Promise<Conversation>
 }

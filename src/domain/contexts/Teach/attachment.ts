@@ -2,7 +2,7 @@ import { Context, Response, Input } from '../../contracts/chatbot.interface';
 import { Contexts } from '../../enums/contexts.enum';
 import { createMessage } from '../../hooks/create-message.hook';
 
-export class TeachAskTitle implements Context {
+export class Attachment implements Context {
 
   constructor (private readonly contextCode: Contexts) {}
 
@@ -11,10 +11,19 @@ export class TeachAskTitle implements Context {
   };
 
   public async onActivity(_input: Input): Promise<Response> {
+
+    if (_input.text === '1') {
+      return createMessage({
+        context: this,
+        fowardTo: Contexts.SaveKnowledge,
+        message: 'Blz..',
+        delay: 0,
+      })
+    }
+
     return createMessage({
       context: this,
-      fowardTo: Contexts.TeachAskKnowledge,
-      message: 'Blz..',
+      message: 'Valeu pelo arquivo! Digite 1 para finalizar, ou anexe outros arquivos',
       delay: 0,
     })
   }
@@ -22,7 +31,7 @@ export class TeachAskTitle implements Context {
   public async onInit(): Promise<Response> {
     return createMessage({
       context: this,
-      message: 'Qual o título do conhecimento?',
+      message: 'Por favor, anexe o arquivo que você deseja atrelar ao conhecimento.',
       delay: 0,
     })
   }

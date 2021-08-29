@@ -1,8 +1,9 @@
 import { Failure, Foward, Message } from "../../contracts/chatbot.interface"
+import { Contexts } from "../../enums/contexts.enum"
 
 const onSuccess: Omit<Foward, 'context'> = {
   message: 'Ótimo, estou vinculando sua conta.',
-  fowardTo: 1,
+  fowardTo: Contexts.Main,
   delay: 0
 }
 

@@ -61,13 +61,16 @@ export class PrismaEmployeeRepository implements EmployeeRepository {
     return result.employee
   }
 
-  async getLastConversation (employeeId: number): Promise<Conversation> {
+  async getLastConversation (employeeId: number, contextId?: number): Promise<Conversation> {
     const prisma = await this.prismaProvider.getConnection()
 
     try {
       const conversation = await prisma.conversation.findFirst({
         where: {
-          employeeId
+          employeeId,
+          context: {
+            equals: contextId ?? undefined
+          }
         },
         orderBy: {
           id: 'desc',

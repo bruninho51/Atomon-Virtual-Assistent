@@ -12,18 +12,30 @@ generator client {
 }
 
 model Conversation {
-  id         Int      @id @default(autoincrement())
-  context    Int
-  answer     String
-  type       String
-  isStarted  Boolean  @default(false) @map("is_started")
-  typedText  String?   @map("typed_text")
-  createdAt  DateTime @default(now()) @map("created_at")
-  updatedAt  DateTime @updatedAt @map("updated_at")
-  employee   Employee @relation(fields: [employeeId], references: [id])
-  employeeId Int      @map("employee_id")
+  id          Int          @id @default(autoincrement())
+  context     Int
+  answer      String
+  type        String
+  isStarted   Boolean      @default(false) @map("is_started")
+  typedText   String?      @map("typed_text")
+  createdAt   DateTime     @default(now()) @map("created_at")
+  updatedAt   DateTime     @updatedAt @map("updated_at")
+  employee    Employee     @relation(fields: [employeeId], references: [id])
+  employeeId  Int          @map("employee_id")
+  attachments Attachment[]
 
   @@map(name: "conversations")
+}
+
+model Attachment {
+  id             Int          @id @default(autoincrement())
+  filename       String
+  conversation   Conversation @relation(fields: [conversationId], references: [id])
+  conversationId Int          @map("conversation_id")
+  createdAt      DateTime     @default(now()) @map("created_at")
+  updatedAt      DateTime     @updatedAt @map("updated_at")
+
+  @@map(name: "attachments")
 }
 
 model TemporaryConversation {
@@ -32,7 +44,7 @@ model TemporaryConversation {
   answer    String
   type      String
   isStarted Boolean  @default(false) @map("is_started")
-  typedText String?   @map("typed_text")
+  typedText String?  @map("typed_text")
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
   from      String

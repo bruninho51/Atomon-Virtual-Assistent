@@ -34,6 +34,7 @@ export class TeamsAmqpWatcher implements MessageReader {
         const data = JSON.parse(message.content.toString());
         const conversationReference = data.conversationReference as ConversationReference;
         const activity = data.activity as Activity;
+        const { attachmentsFilePaths } = data;
   
         let employee = await this.employeeRepository.findByToken(Client.teams, activity.from.id)
   
@@ -49,7 +50,8 @@ export class TeamsAmqpWatcher implements MessageReader {
           text: activity.text,
           token: activity.from.id,
           client: Client.teams,
-          employeeId: employee?.id
+          employeeId: employee?.id,
+          attachments: attachmentsFilePaths
         }, conversation);
   
         if (!employee) {
@@ -64,6 +66,7 @@ export class TeamsAmqpWatcher implements MessageReader {
             isStarted: true,
             type: 'plaintext',
             typedText: activity.text,
+            attachments: message.attachments,
           }) as Conversation)
           await this.employeeRepository.saveConversations(employee.id, conversations)
         } else {
@@ -73,7 +76,8 @@ export class TeamsAmqpWatcher implements MessageReader {
             isStarted: true,
             from: activity.from.id,
             type: 'plaintext',
-            typedText: activity.text
+            typedText: activity.text,
+            attachments: message.attachments,   
           }) as TemporaryConversation)
           await this.tempConversationRepository.saveConversations(conversations)
         }

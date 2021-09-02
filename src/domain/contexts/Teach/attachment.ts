@@ -23,7 +23,8 @@ export class Attachment implements Context {
 
     return createMessage({
       context: this,
-      message: 'Valeu pelo arquivo! Digite 1 para finalizar, ou anexe outros arquivos',
+      message: 'Valeu pelos arquivos! Digite 1 para finalizar, ou anexe outros arquivos',
+      attachments: _input.attachments ?? null,
       delay: 0,
     })
   }

@@ -4,6 +4,7 @@ export interface Conversation {
     answer: string;
 	type: string;
 	typedText: string;
+	attachments?: string[];
 	isStarted: boolean;
 	createdAt: Date;
 	updatedAt: Date;

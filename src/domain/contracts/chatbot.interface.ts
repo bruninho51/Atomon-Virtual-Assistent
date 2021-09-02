@@ -6,6 +6,7 @@ export type Message<T = unknown> = {
   delay: number
   context: Context
   cardType?: CardType
+  attachments?: string[]
 }
 
 export interface Foward<T = unknown> extends Message<T> {
@@ -32,4 +33,5 @@ export interface Input {
   client: Client
   token: string
   employeeId: number
+  attachments: string[]
 }

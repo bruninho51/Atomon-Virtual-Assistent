@@ -10,6 +10,8 @@ import { BotFrameworkSaveAttachment } from './infra/services/bot-framework-save-
   const app = express()
   app.use(express.json())
 
+  app.use(express.static('tmp'))
+
   const watcher = await makeTeamsAmpqWacher()
   watcher.read()
 

@@ -12,6 +12,7 @@ export const createSimpleCardMessages = (messages: Speak<SimpleCard>[]): Respons
     delay: message.delay,
     fowardTo: message['fowardTo'],
     message: message.message,
+    attachments: message.message.attachments,
     cardType: CardType.simple
   }))
 }

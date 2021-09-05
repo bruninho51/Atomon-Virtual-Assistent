@@ -11,4 +11,5 @@ export class EmployeeRepository {
   saveConversations: (employeeId: number, conversations: Conversation[]) => Promise<Employee>
   getLastConversation: (employeeId: number, contextId?: number) => Promise<Conversation>
   findConversationByCursor: (employeeId: number, cursor: number) => Promise<Conversation>
+  getLastAttachments: (employeeId: number) => Promise<string[]>
 }

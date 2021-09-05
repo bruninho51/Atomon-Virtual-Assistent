@@ -56,7 +56,8 @@ export class Question implements Context {
       fowardTo: Contexts.Main,
       message: {
         title: hit._source.title,
-        body: hit._source.knowledge
+        body: hit._source.knowledge,
+        attachments: hit._source.attachments
       },
     }))
 

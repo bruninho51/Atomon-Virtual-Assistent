@@ -30,6 +30,8 @@ export class SaveKnowledge implements Context {
     const askTitleContext = await getConversation(input.employeeId, Contexts.TeachAskTitle)
     const askKnowledgeContext = await getConversation(input.employeeId, Contexts.TeachAskKnowledge)
 
+    const attachments: string[] = await this.employeeRepository.getLastAttachments(input.employeeId)
+
     const title = askTitleContext.typedText
     const knowledge = askKnowledgeContext.typedText
 
@@ -44,7 +46,8 @@ export class SaveKnowledge implements Context {
         id: cuid(),
         body: {
           title,
-          knowledge
+          knowledge,
+          attachments
         }
       })
 

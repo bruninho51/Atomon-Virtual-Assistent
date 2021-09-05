@@ -3,6 +3,7 @@ import { Message } from "../../domain/contracts/chatbot.interface";
 import { SimpleCard } from "../../domain/models/simple-card-message";
 
 export const createSimpleCard = async (message: Message<SimpleCard>): Promise<Attachment> => {
+  console.log('attachments: ', message.attachments)
   return {
     "contentType": "application/vnd.microsoft.card.adaptive",
     "content": {
@@ -32,6 +33,6 @@ export const createSimpleCard = async (message: Message<SimpleCard>): Promise<At
           ]
         }
       ],
-    }  
+    }
   }
 }

@@ -6,6 +6,8 @@ import { Elasticsearch } from '../../../config/config';
 import { createSimpleCardMessages } from '../../hooks/create-messages.hook';
 import { SimpleCard } from '../../models/simple-card-message';
 import { Intent } from '../../enums/intent.enum';
+import { SupportedAttachments } from '../../enums/supported-attachments';
+import * as path from 'path'
 
 export class Question implements Context {
   constructor (private readonly contextCode: Contexts) {}
@@ -57,7 +59,16 @@ export class Question implements Context {
       message: {
         title: hit._source.title,
         body: hit._source.knowledge,
-        attachments: hit._source.attachments
+        attachments: hit._source.attachments.map(filename => {
+          const ext = path.extname(filename).replace('.', '')
+          return {
+            icon: SupportedAttachments.Icon[ext],
+            mimetype: SupportedAttachments.Mimetype[ext],
+            url: `${process.env.DOMAIN_NAME}:${process.env.PORT}/files/${filename}`,
+            filename: filename,
+            title: filename
+          }
+        })
       },
     }))
 

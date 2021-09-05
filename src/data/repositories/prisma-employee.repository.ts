@@ -5,12 +5,14 @@ import { EmployeeRepository } from "../../domain/contracts/employee-repository.i
 import { EmployeeToken } from "../../domain/models/employee-token"
 import { Conversation } from "../../domain/models/conversation"
 import { Contexts } from "../../domain/enums/contexts.enum"
-import { Attachment } from ".prisma/client"
+import { Attachment } from "../../domain/models/attachment"
+import { SupportedAttachments } from "../../domain/enums/supported-attachments"
+import * as path from "path"
 
 export class PrismaEmployeeRepository implements EmployeeRepository {
   constructor (private readonly prismaProvider: PrismaProvider) {}
 
-  async getLastAttachments (employeeId: number): Promise<string[]> {
+  async getLastAttachments (employeeId: number): Promise<Attachment[]> {
     const prisma = await this.prismaProvider.getConnection()
     
     const lastMain = await prisma.conversation.findFirst({
@@ -43,8 +45,19 @@ export class PrismaEmployeeRepository implements EmployeeRepository {
       }
     })
 
-    return attachments.map(
-      (attachment: Attachment) => attachment.filename)
+    const result = attachments.map(
+      (attachment): Attachment => {
+        const ext = path.extname(attachment.filename).replace('.', '')
+        return {
+          icon: SupportedAttachments.Icon[ext],
+          mimetype: SupportedAttachments.Mimetype[ext],
+          url: `${process.env.DOMAIN_NAME}:${process.env.PORT}/files/${attachment.filename}`,
+          filename: attachment.filename,
+          title: attachment.filename
+        }
+      })
+
+    return result
   }
 
   async findConversationByCursor (employeeId: number, cursor: number): Promise<Conversation> {
@@ -80,6 +93,9 @@ export class PrismaEmployeeRepository implements EmployeeRepository {
   async saveConversation (employeeId: number, conversation: Conversation): Promise<Employee> {
     const prisma = await this.prismaProvider.getConnection()
 
+    console.log('attachs:')
+    console.dir(conversation.attachments, { depth: null })
+
     const result = await prisma.conversation.create({
       include: { employee: {
         include: { conversation: true }
@@ -97,8 +113,8 @@ export class PrismaEmployeeRepository implements EmployeeRepository {
           }
         },
         attachments: {
-          create: conversation.attachments?.map((attachment: string) => ({
-            filename: attachment
+          create: conversation.attachments?.map((attachment) => ({
+            filename: attachment.filename
           }))
         }
       }

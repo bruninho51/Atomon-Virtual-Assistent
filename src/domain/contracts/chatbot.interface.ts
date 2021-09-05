@@ -1,12 +1,13 @@
 import { CardType } from "../enums/card-type.enum"
 import { Client } from "../enums/client.enum"
+import { Attachment } from "../models/attachment"
 
 export type Message<T = unknown> = {
   message: T
   delay: number
   context: Context
   cardType?: CardType
-  attachments?: string[]
+  attachments?: Attachment[]
 }
 
 export interface Foward<T = unknown> extends Message<T> {
@@ -34,5 +35,5 @@ export interface Input {
   client: Client
   token: string
   employeeId: number
-  attachments: string[]
+  attachments: Attachment[]
 }

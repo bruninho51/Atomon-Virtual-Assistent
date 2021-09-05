@@ -6,6 +6,7 @@ import * as elasticsearch from 'elasticsearch'
 import { createMessage } from '../../hooks/create-message.hook';
 import * as cuid from 'cuid';
 import { Intent } from '../../enums/intent.enum';
+import { Attachment } from '../../models/attachment';
 
 export class SaveKnowledge implements Context {
 
@@ -30,7 +31,7 @@ export class SaveKnowledge implements Context {
     const askTitleContext = await getConversation(input.employeeId, Contexts.TeachAskTitle)
     const askKnowledgeContext = await getConversation(input.employeeId, Contexts.TeachAskKnowledge)
 
-    const attachments: string[] = await this.employeeRepository.getLastAttachments(input.employeeId)
+    const attachments: Attachment[] = await this.employeeRepository.getLastAttachments(input.employeeId)
 
     const title = askTitleContext.typedText
     const knowledge = askKnowledgeContext.typedText
@@ -47,7 +48,8 @@ export class SaveKnowledge implements Context {
         body: {
           title,
           knowledge,
-          attachments
+          attachments: attachments.map(
+            attachment => attachment.filename)
         }
       })
 

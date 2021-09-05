@@ -1,4 +1,5 @@
 import { Client } from "../enums/client.enum";
+import { Attachment } from "../models/attachment";
 import { Conversation } from "../models/conversation";
 import { Employee } from "../models/employee"
 import { EmployeeToken } from "../models/employee-token";
@@ -11,5 +12,5 @@ export class EmployeeRepository {
   saveConversations: (employeeId: number, conversations: Conversation[]) => Promise<Employee>
   getLastConversation: (employeeId: number, contextId?: number) => Promise<Conversation>
   findConversationByCursor: (employeeId: number, cursor: number) => Promise<Conversation>
-  getLastAttachments: (employeeId: number) => Promise<string[]>
+  getLastAttachments: (employeeId: number) => Promise<Attachment[]>
 }

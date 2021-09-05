@@ -11,6 +11,8 @@ import { ChatbotEngineService } from '../chatbot-engine.service';
 import { EmployeeRepository } from '../../../domain/contracts/employee-repository.interface';
 import { TemporaryConversationRepository } from '../../../domain/contracts/temporary_conversation-repository.interface';
 import { CardBuilder } from '../../../domain/contracts/card-builder.interface';
+import { SupportedAttachments } from '../../../domain/enums/supported-attachments';
+import * as path from 'path'
 
 export class TeamsAmqpWatcher implements MessageReader {
   constructor (
@@ -35,6 +37,19 @@ export class TeamsAmqpWatcher implements MessageReader {
         const conversationReference = data.conversationReference as ConversationReference;
         const activity = data.activity as Activity;
         const { attachmentsFilePaths } = data;
+
+
+
+        const attachments = attachmentsFilePaths.map(filename => {
+          const ext = path.extname(filename).replace('.', '')
+          return {
+            icon: SupportedAttachments.Icon[ext],
+            mimetype: SupportedAttachments.Mimetype[ext],
+            url: `${process.env.DOMAIN_NAME}:${process.env.PORT}/files/${filename}`,
+            filename: filename,
+            title: filename
+          }
+        })
   
         let employee = await this.employeeRepository.findByToken(Client.teams, activity.from.id)
   
@@ -51,7 +66,7 @@ export class TeamsAmqpWatcher implements MessageReader {
           token: activity.from.id,
           client: Client.teams,
           employeeId: employee?.id,
-          attachments: attachmentsFilePaths
+          attachments: attachments
         }, conversation);
   
         if (!employee) {
@@ -59,7 +74,6 @@ export class TeamsAmqpWatcher implements MessageReader {
         }
   
         if (employee) {
-          console.dir(messages, { depth: null })
           const conversations = messages.map(message => ({
             context: message.context.getContextCode(),
             answer: typeof message.message === 'object' ? JSON.stringify(message.message) : message.message,
@@ -69,6 +83,9 @@ export class TeamsAmqpWatcher implements MessageReader {
             attachments: message.attachments,
             intent: message.context.getIntent()
           }) as Conversation)
+
+          console.dir(conversations, { depth: null })
+
           await this.employeeRepository.saveConversations(employee.id, conversations)
         } else {
           const conversations = messages.map(message => ({

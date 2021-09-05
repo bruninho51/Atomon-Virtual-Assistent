@@ -67,6 +67,7 @@ export class TeamsAmqpWatcher implements MessageReader {
             type: 'plaintext',
             typedText: activity.text,
             attachments: message.attachments,
+            intent: message.context.getIntent()
           }) as Conversation)
           await this.employeeRepository.saveConversations(employee.id, conversations)
         } else {
@@ -77,7 +78,7 @@ export class TeamsAmqpWatcher implements MessageReader {
             from: activity.from.id,
             type: 'plaintext',
             typedText: activity.text,
-            attachments: message.attachments,   
+            attachments: message.attachments,
           }) as TemporaryConversation)
           await this.tempConversationRepository.saveConversations(conversations)
         }

@@ -5,11 +5,16 @@ import * as elasticsearch from 'elasticsearch'
 import { Elasticsearch } from '../../../config/config';
 import { createSimpleCardMessages } from '../../hooks/create-messages.hook';
 import { SimpleCard } from '../../models/simple-card-message';
+import { Intent } from '../../enums/intent.enum';
 
 export class Question implements Context {
   constructor (private readonly contextCode: Contexts) {}
   getContextCode (): number {
     return this.contextCode
+  }
+
+  getIntent (): Intent {
+    return Intent.Question
   }
 
   public async onActivity(_input: Input): Promise<Response> {

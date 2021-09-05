@@ -5,6 +5,7 @@ export interface Conversation {
 	type: string;
 	typedText: string;
 	attachments?: string[];
+	intent: string;
 	isStarted: boolean;
 	createdAt: Date;
 	updatedAt: Date;

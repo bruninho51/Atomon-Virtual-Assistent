@@ -2,6 +2,7 @@ import { Context, Response, Input } from '../../contracts/chatbot.interface';
 import { EmployeeRepository } from '../../contracts/employee-repository.interface';
 import { Client } from '../../enums/client.enum';
 import { Contexts } from '../../enums/contexts.enum';
+import { Intent } from '../../enums/intent.enum';
 import { createMessage } from '../../hooks/create-message.hook';
 import LoginMessages from './messages';
 
@@ -10,6 +11,10 @@ export class Login implements Context {
     private readonly contextCode: Contexts,
     private readonly employeeRepository: EmployeeRepository
   ) {}
+
+  getIntent (): Intent {
+    return Intent.Login
+  }
 
   getContextCode (): number {
     return this.contextCode

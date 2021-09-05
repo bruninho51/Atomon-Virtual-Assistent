@@ -23,6 +23,7 @@ export type Response<T = unknown> = Array<Speak<T>>
 
 export interface Context {
   getContextCode: () => number
+  getIntent: () => string
   onActivity: (input: Input) => Promise<Response>
   onInit: (input?: Input) => Promise<Response>
   onFinish: (input?: Input) => Promise<Response>

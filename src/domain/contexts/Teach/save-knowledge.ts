@@ -5,6 +5,7 @@ import { Elasticsearch } from '../../../config/config';
 import * as elasticsearch from 'elasticsearch'
 import { createMessage } from '../../hooks/create-message.hook';
 import * as cuid from 'cuid';
+import { Intent } from '../../enums/intent.enum';
 
 export class SaveKnowledge implements Context {
 
@@ -16,6 +17,10 @@ export class SaveKnowledge implements Context {
   public getContextCode (): number {
     return this.contextCode
   };
+
+  getIntent (): Intent {
+    return Intent.Teach
+  }
 
   public async onActivity(input: Input): Promise<Response> {
     // save knowledge on elasticsearch

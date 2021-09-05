@@ -40,8 +40,6 @@ export class PrismaEmployeeRepository implements EmployeeRepository {
   async saveConversation (employeeId: number, conversation: Conversation): Promise<Employee> {
     const prisma = await this.prismaProvider.getConnection()
 
-    console.log(conversation.attachments)
-
     const result = await prisma.conversation.create({
       include: { employee: {
         include: { conversation: true }
@@ -52,6 +50,7 @@ export class PrismaEmployeeRepository implements EmployeeRepository {
         type: conversation.type,
         isStarted: conversation.isStarted ?? false,
         typedText: conversation.typedText,
+        intent: conversation.intent,
         employee: {
           connect: {
             id: employeeId

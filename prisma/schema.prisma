@@ -23,6 +23,7 @@ model Conversation {
   employee    Employee     @relation(fields: [employeeId], references: [id])
   employeeId  Int          @map("employee_id")
   attachments Attachment[]
+  intent      String
 
   @@map(name: "conversations")
 }
@@ -48,6 +49,7 @@ model TemporaryConversation {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
   from      String
+  intent    String
 
   @@map(name: "temporary_conversations")
 }

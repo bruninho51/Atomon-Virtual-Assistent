@@ -1,5 +1,6 @@
 import { Context, Response, Input } from '../../contracts/chatbot.interface';
 import { Contexts } from '../../enums/contexts.enum';
+import { Intent } from '../../enums/intent.enum';
 import { createMessage } from '../../hooks/create-message.hook';
 
 export class AskAttachment implements Context {
@@ -9,6 +10,10 @@ export class AskAttachment implements Context {
   public getContextCode (): number {
     return this.contextCode
   };
+
+  getIntent (): Intent {
+    return Intent.Teach
+  }
 
   public async onActivity(input: Input): Promise<Response> {
 

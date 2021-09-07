@@ -59,7 +59,7 @@ export class Question implements Context {
       message: {
         title: hit._source.title,
         body: hit._source.knowledge,
-        attachments: hit._source.attachments.map(filename => {
+        attachments: hit._source.attachments?.map(filename => {
           const ext = path.extname(filename).replace('.', '')
           return {
             icon: SupportedAttachments.Icon[ext],

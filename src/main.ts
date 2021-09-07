@@ -22,11 +22,15 @@ import { BotFrameworkSaveAttachment } from './infra/services/bot-framework-save-
     const activity = req.body as Activity;
     const conversationReference = TurnContext.getConversationReference(activity);
 
-    const attachmentsFilePaths: string[] = []
+    const attachments: any[] = []
     if (activity.attachments) {
       const attachmentSaver = new BotFrameworkSaveAttachment()
       for (const attachment of activity.attachments) {
-        attachmentsFilePaths.push(await attachmentSaver.save(attachment))
+        console.dir(attachment)
+        attachments.push({
+          filename: await attachmentSaver.save(attachment),
+          name: attachment.name,
+        })
       }
     }
 
@@ -38,7 +42,7 @@ import { BotFrameworkSaveAttachment } from './infra/services/bot-framework-save-
       channel.sendToQueue(queueName, Buffer.from(
         JSON.stringify({
           conversationReference,
-          attachmentsFilePaths,
+          attachments,
           activity
         })
       ), {

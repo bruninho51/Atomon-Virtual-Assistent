@@ -1,16 +1,17 @@
-import { Context, Response, Input, Foward } from '../../contracts/chatbot.interface';
+import { Context, Response, Input } from '../../contracts/chatbot.interface';
 import { Contexts } from '../../enums/contexts.enum';
 import { createMessage } from '../../hooks/create-message.hook';
 import * as elasticsearch from 'elasticsearch'
 import { Elasticsearch } from '../../../config/config';
 import { createSimpleCardMessages } from '../../hooks/create-messages.hook';
-import { SimpleCard } from '../../models/simple-card-message';
 import { Intent } from '../../enums/intent.enum';
-import { SupportedAttachments } from '../../enums/supported-attachments';
-import * as path from 'path'
+import { EmployeeRepository } from '../../contracts/employee-repository.interface';
 
 export class Question implements Context {
-  constructor (private readonly contextCode: Contexts) {}
+  constructor (
+    private readonly contextCode: Contexts,
+    private readonly employeeRepository: EmployeeRepository,
+  ) {}
   getContextCode (): number {
     return this.contextCode
   }
@@ -52,25 +53,23 @@ export class Question implements Context {
 
     const $this = this
     console.dir(hits.hits, { depth: null })
-    const messages = hits.hits.map((hit: any): Foward<SimpleCard> => ({
-      context: $this,
-      delay: 0,
-      fowardTo: Contexts.Main,
-      message: {
-        title: hit._source.title,
-        body: hit._source.knowledge,
-        attachments: hit._source.attachments?.map(filename => {
-          const ext = path.extname(filename).replace('.', '')
-          return {
-            icon: SupportedAttachments.Icon[ext],
-            mimetype: SupportedAttachments.Mimetype[ext],
-            url: `${process.env.DOMAIN_NAME}:${process.env.PORT}/files/${filename}`,
-            filename: filename,
-            title: filename
-          }
-        })
-      },
-    }))
+
+    const messages = []
+    for (const hit of hits.hits) {
+      messages.push({
+        context: $this,
+        delay: 0,
+        fowardTo: Contexts.Main,
+        message: {
+          title: hit._source.title,
+          body: hit._source.knowledge,
+          attachments: await Promise.all(hit._source.attachments?.map(filename => {
+          // obter attachment via repositório
+            return this.employeeRepository.getAttachmentByFilename(_input.employeeId, filename)
+          }) ?? [])
+        },
+      })
+    }
 
     return createSimpleCardMessages(messages)
   }

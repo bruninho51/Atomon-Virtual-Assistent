@@ -12,6 +12,20 @@ import * as path from "path"
 export class PrismaEmployeeRepository implements EmployeeRepository {
   constructor (private readonly prismaProvider: PrismaProvider) {}
 
+  async getAttachmentByFilename (employeeId: number, filename: string): Promise<Attachment> {
+    const prisma = await this.prismaProvider.getConnection()
+    const attachment = await prisma.attachment.findFirst({
+      where: {
+        filename,
+        conversation: {
+          employeeId,
+        }
+      }
+    })
+
+    return attachment
+  }
+
   async getLastAttachments (employeeId: number): Promise<Attachment[]> {
     const prisma = await this.prismaProvider.getConnection()
     
@@ -114,7 +128,11 @@ export class PrismaEmployeeRepository implements EmployeeRepository {
         },
         attachments: {
           create: conversation.attachments?.map((attachment) => ({
-            filename: attachment.filename
+            filename: attachment.filename,
+            icon: attachment.icon,
+            mimetype: attachment.mimetype,
+            title: attachment.title,
+            url: attachment.url
           }))
         }
       }

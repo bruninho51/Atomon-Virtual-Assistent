@@ -14,7 +14,7 @@ generator client {
 model Conversation {
   id          Int          @id @default(autoincrement())
   context     Int
-  answer      String
+  answer      String?
   type        String
   isStarted   Boolean      @default(false) @map("is_started")
   typedText   String?      @map("typed_text")
@@ -31,6 +31,10 @@ model Conversation {
 model Attachment {
   id             Int          @id @default(autoincrement())
   filename       String
+  title          String
+  url            String
+  mimetype       String
+  icon           String
   conversation   Conversation @relation(fields: [conversationId], references: [id])
   conversationId Int          @map("conversation_id")
   createdAt      DateTime     @default(now()) @map("created_at")

@@ -36,18 +36,18 @@ export class TeamsAmqpWatcher implements MessageReader {
         const data = JSON.parse(message.content.toString());
         const conversationReference = data.conversationReference as ConversationReference;
         const activity = data.activity as Activity;
-        const { attachmentsFilePaths } = data;
+        const { attachments: attachs } = data;
 
 
 
-        const attachments = attachmentsFilePaths.map(filename => {
-          const ext = path.extname(filename).replace('.', '')
+        const attachments = attachs.map(attachment => {
+          const ext = path.extname(attachment.filename).replace('.', '')
           return {
             icon: SupportedAttachments.Icon[ext],
             mimetype: SupportedAttachments.Mimetype[ext],
-            url: `${process.env.DOMAIN_NAME}:${process.env.PORT}/files/${filename}`,
-            filename: filename,
-            title: filename
+            url: `${process.env.DOMAIN_NAME}:${process.env.PORT}/files/${attachment.filename}`,
+            filename: attachment.filename,
+            title: attachment.name
           }
         })
   

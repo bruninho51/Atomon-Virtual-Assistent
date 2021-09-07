@@ -19,7 +19,7 @@ export const getContext = async (context: Contexts): Promise<Context> => {
     [Contexts.Main]: new Main(Contexts.Main),
     [Contexts.TeachAskTitle]: new TeachAskTitle(Contexts.TeachAskTitle),
     [Contexts.TeachAskKnowledge]: new TeachAskKnowledge(Contexts.TeachAskKnowledge),
-    [Contexts.Question]: new Question(Contexts.Question),
+    [Contexts.Question]: new Question(Contexts.Question, employeeRepository),
     [Contexts.AskAttachment]: new AskAttachment(Contexts.AskAttachment),
     [Contexts.Attachment]: new Attachment(Contexts.Attachment),
     [Contexts.SaveKnowledge]: new SaveKnowledge(Contexts.SaveKnowledge, employeeRepository),

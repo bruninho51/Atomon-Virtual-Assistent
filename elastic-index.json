@@ -1,29 +1,30 @@
 {
     "settings_config":{
-       "settings":{
-          "analysis":{
-             "filter":{
-                "brazilian_stop":{
-                   "type":"stop",
-                   "stopwords":"_brazilian_"
-                },
-                "brazilian_stemmer":{
-                   "type":"stemmer",
-                   "language":"brazilian"
-                }
-             },
-             "analyzer":{
-                "atomon_analyzer":{
-                   "tokenizer":"standard",
-                   "filter":[
-                      "lowercase",
-                      "brazilian_stop",
-                      "brazilian_stemmer"
-                   ]
-                }
-             }
+      "settings": {
+        "analysis": {
+          "filter": {
+            "brazilian_stop": {
+              "type":       "stop",
+              "stopwords":  "_brazilian_"
+            },
+            "brazilian_stemmer": {
+              "type":       "stemmer",
+              "language":   "minimal_portuguese"
+            }
+          },
+          "analyzer": {
+            "atomon_analyzer": {
+              "tokenizer":  "standard",
+              "filter": [
+                "lowercase",
+                "brazilian_stop",
+                "brazilian_stemmer",
+                "asciifolding"
+              ]
+            }
           }
-       }
+        }
+      }
     },
     "query_example":{
        "query":{

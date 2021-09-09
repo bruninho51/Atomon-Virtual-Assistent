@@ -30,6 +30,7 @@ export class Question implements Context {
     });
 
     const keywords = await this.keywordsRepository.getKeywords(_input.text)
+    const query = keywords.join(' ')
 
     const { hits }: any = await client.search({
       index: 'atomon',
@@ -37,7 +38,7 @@ export class Question implements Context {
       body: {
         query: {
           multi_match: {
-            query : keywords.join(' '),
+            query,
             operator: 'and',
             fuzziness: "AUTO",
             analyzer: "atomon_analyzer",

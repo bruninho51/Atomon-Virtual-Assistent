@@ -6,12 +6,15 @@ import { Elasticsearch } from '../../../config/config';
 import { createSimpleCardMessages } from '../../hooks/create-messages.hook';
 import { Intent } from '../../enums/intent.enum';
 import { EmployeeRepository } from '../../contracts/employee-repository.interface';
+import { KeywordsRepository } from '../../contracts/keywords.repository';
 
 export class Question implements Context {
   constructor (
     private readonly contextCode: Contexts,
     private readonly employeeRepository: EmployeeRepository,
+    private readonly keywordsRepository: KeywordsRepository,
   ) {}
+
   getContextCode (): number {
     return this.contextCode
   }
@@ -26,13 +29,15 @@ export class Question implements Context {
       hosts: [Elasticsearch.url]
     });
 
+    const keywords = await this.keywordsRepository.getKeywords(_input.text)
+
     const { hits }: any = await client.search({
       index: 'atomon',
       type: 'knowledge',
       body: {
         query: {
           multi_match: {
-            query : _input.text,
+            query : keywords.join(' '),
             operator: 'and',
             fuzziness: "AUTO",
             analyzer: "atomon_analyzer",

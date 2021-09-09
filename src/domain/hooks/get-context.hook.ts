@@ -9,17 +9,19 @@ import { TeachAskKnowledge } from "../contexts/Teach/teach-ask-knowledge";
 import { AskAttachment } from "../contexts/Teach/ask-attachment";
 import { Attachment } from "../contexts/Teach/attachment";
 import { SaveKnowledge } from "../contexts/Teach/save-knowledge";
+import { makeLUISKeywordRepository } from "../../main/factories/repositories/luis-keyword-repository.factory";
 
 export const getContext = async (context: Contexts): Promise<Context> => {
 
   const employeeRepository = await makePrismaEmployeeRepository()
+  const keywordsRepository = await makeLUISKeywordRepository()
 
   const contexts = {
     [Contexts.Login]: new Login(Contexts.Login, employeeRepository),
     [Contexts.Main]: new Main(Contexts.Main),
     [Contexts.TeachAskTitle]: new TeachAskTitle(Contexts.TeachAskTitle),
     [Contexts.TeachAskKnowledge]: new TeachAskKnowledge(Contexts.TeachAskKnowledge),
-    [Contexts.Question]: new Question(Contexts.Question, employeeRepository),
+    [Contexts.Question]: new Question(Contexts.Question, employeeRepository, keywordsRepository),
     [Contexts.AskAttachment]: new AskAttachment(Contexts.AskAttachment),
     [Contexts.Attachment]: new Attachment(Contexts.Attachment),
     [Contexts.SaveKnowledge]: new SaveKnowledge(Contexts.SaveKnowledge, employeeRepository),

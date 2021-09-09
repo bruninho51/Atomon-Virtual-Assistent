@@ -53,7 +53,8 @@
     "knex": "^0.21.21",
     "mysql": "^2.18.1",
     "mysql2": "^2.3.0",
-    "tslib": "~2.3.0"
+    "tslib": "~2.3.0",
+    "@azure/ai-text-analytics": "^5.1.0"
   },
   "volta": {
     "node": "14.16.1"

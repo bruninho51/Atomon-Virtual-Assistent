@@ -54,7 +54,7 @@ export class PrismaEmployeeRepository implements EmployeeRepository {
       where: {
         conversationId: { 
           in: conversations.map(
-            (conversation: Conversation) => conversation.id) 
+            (conversation: Conversation) => conversation.id)
         }
       }
     })

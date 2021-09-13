@@ -24,14 +24,14 @@ export class SaveKnowledge implements Context {
   }
 
   public async onActivity(input: Input): Promise<Response> {
-    // save knowledge on elasticsearch
     const { getLastConversation } = this.employeeRepository
     const getConversation = getLastConversation.bind(this.employeeRepository)
 
     const askTitleContext = await getConversation(input.employeeId, Contexts.TeachAskTitle)
     const askKnowledgeContext = await getConversation(input.employeeId, Contexts.TeachAskKnowledge)
 
-    const attachments: Attachment[] = await this.employeeRepository.getLastAttachments(input.employeeId)
+    const attachments: Attachment[] = await this.employeeRepository
+      .getLastAttachments(input.employeeId)
 
     const title = askTitleContext.typedText
     const knowledge = askKnowledgeContext.typedText
@@ -52,13 +52,6 @@ export class SaveKnowledge implements Context {
             attachment => attachment.filename)
         }
       })
-
-      return createMessage({
-        context: this,
-        fowardTo: Contexts.Main,
-        message: 'Conhecimento salvo!',
-        delay: 0,
-      })
     } catch (error) {
       return createMessage({
         context: this,
@@ -67,6 +60,19 @@ export class SaveKnowledge implements Context {
         delay: 0,
       })
     }
+
+    const employee = await this.employeeRepository
+      .findById(input.employeeId)
+
+    await this.employeeRepository
+      .sumScore(employee.id, employee.tenant.score)
+
+    return createMessage({
+      context: this,
+      fowardTo: Contexts.Main,
+      message: `Conhecimento salvo! Você ganhou ${employee.tenant.score} pontos.`,
+      delay: 0,
+    })
   }
 
   public async onInit(input: Input): Promise<Response> {

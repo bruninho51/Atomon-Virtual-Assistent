@@ -11,6 +11,34 @@ import * as path from "path"
 
 export class PrismaEmployeeRepository implements EmployeeRepository {
   constructor (private readonly prismaProvider: PrismaProvider) {}
+  async findById (employeeId: number): Promise<Employee> {
+    const prisma = await this.prismaProvider.getConnection()
+
+    return await prisma.employee.findUnique({
+      where: {
+        id: employeeId,
+      },
+      include: {
+        employeeToken: true,
+        tenant: true,
+        conversation: true
+      }
+    })
+  }
+
+  async sumScore (employeeId: number, score: number): Promise<void> {
+    const prisma = await this.prismaProvider.getConnection()
+    await prisma.employee.update({
+      where: {
+        id: employeeId,
+      },
+      data: {
+        score: {
+          increment: score
+        }
+      }
+    })
+  }
 
   async getAttachmentByFilename (employeeId: number, filename: string): Promise<Attachment> {
     const prisma = await this.prismaProvider.getConnection()
@@ -112,7 +140,7 @@ export class PrismaEmployeeRepository implements EmployeeRepository {
 
     const result = await prisma.conversation.create({
       include: { employee: {
-        include: { conversation: true }
+        include: { conversation: true, tenant: true }
       } },
       data: {
         answer: conversation.answer,
@@ -168,7 +196,7 @@ export class PrismaEmployeeRepository implements EmployeeRepository {
 
     try {
       const employee = await prisma.employee.findFirst({
-        include: { conversation: true, employeeToken: true },
+        include: { conversation: true, employeeToken: true, tenant: true },
         where: {
           code: code ? code : 0
         },
@@ -198,7 +226,7 @@ export class PrismaEmployeeRepository implements EmployeeRepository {
 
     try {
       const employee = await prisma.employee.findFirst({
-        include: { conversation: true, employeeToken: true },
+        include: { conversation: true, employeeToken: true, tenant: true },
         where: {
           employeeToken: {
             some: { token, name }
@@ -213,4 +241,5 @@ export class PrismaEmployeeRepository implements EmployeeRepository {
 
     return null
   }
+
 }

@@ -67,8 +67,21 @@ model Employee {
   employeeToken EmployeeToken[]
   createdAt     DateTime        @default(now()) @map("created_at")
   updatedAt     DateTime        @updatedAt @map("updated_at")
+  tenant        Tenant          @relation(fields: [tenantId], references: [id])
+  tenantId      Int             @map("tenant_id")
 
   @@map(name: "employees")
+}
+
+model Tenant {
+  id        Int      @id @default(autoincrement())
+  name      String
+  score     Int
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  employees Employee[]
+
+  @@map(name: "tenants")
 }
 
 model EmployeeToken {

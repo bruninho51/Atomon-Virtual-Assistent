@@ -24,7 +24,7 @@ export class PrismaTemporaryConversationRepository implements TemporaryConversat
         isStarted: conversation.isStarted ?? false,
         from: conversation.from,
         typedText: conversation.typedText,
-        intent: conversation.intent,
+        intent: 'login',
       }  
     })
   }

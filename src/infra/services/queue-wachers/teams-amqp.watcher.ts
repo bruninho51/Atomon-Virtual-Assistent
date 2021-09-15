@@ -2,7 +2,7 @@ import { ConsumeMessage } from 'amqplib';
 import { Activity, ConversationReference, TurnContext } from 'botbuilder';
 import { AmqpProvider } from '../../providers/amqp.provider';
 import { BotFrameworkProvider } from '../../providers/bot-framework.provider';
-import { RabbitMq } from '../../../config/config';
+import { RabbitMq, Server } from '../../../config/config';
 import { Client } from '../../../domain/enums/client.enum';
 import { MessageReader } from '../../../domain/contracts/message-reader.interface';
 import { Conversation, TemporaryConversation } from '../../../domain/models/conversation';
@@ -45,7 +45,7 @@ export class TeamsAmqpWatcher implements MessageReader {
           return {
             icon: SupportedAttachments.Icon[ext],
             mimetype: SupportedAttachments.Mimetype[ext],
-            url: `${process.env.DOMAIN_NAME}:${process.env.PORT}/files/${attachment.filename}`,
+            url: `${Server.domain}:${Server.port}/files/${attachment.filename}`,
             filename: attachment.filename,
             title: attachment.name
           }

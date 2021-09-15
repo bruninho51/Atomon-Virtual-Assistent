@@ -2,6 +2,7 @@ import { Attachment } from "botbuilder";
 import { Attachment as AttachmentModel } from "../../domain/models/attachment"
 import { Message } from "../../domain/contracts/chatbot.interface";
 import { SimpleCard } from "../../domain/models/simple-card-message";
+import { S3 } from "../../config/config";
 
 export const createSimpleCard = async (message: Message<SimpleCard>): Promise<Attachment> => {
   return {
@@ -37,7 +38,7 @@ export const createSimpleCard = async (message: Message<SimpleCard>): Promise<At
         return {
           "type": "Action.OpenUrl",
           "url": attach.url,
-          "iconUrl": `${process.env.BUCKET}/icons/${attach.icon}`,
+          "iconUrl": `${S3.assets}/${attach.icon}`,
           "title": attach.title
         }
       })

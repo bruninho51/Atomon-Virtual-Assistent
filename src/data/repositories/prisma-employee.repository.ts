@@ -8,6 +8,7 @@ import { Contexts } from "../../domain/enums/contexts.enum"
 import { Attachment } from "../../domain/models/attachment"
 import { SupportedAttachments } from "../../domain/enums/supported-attachments"
 import * as path from "path"
+import { Server } from "../../config/config"
 
 export class PrismaEmployeeRepository implements EmployeeRepository {
   constructor (private readonly prismaProvider: PrismaProvider) {}
@@ -93,7 +94,7 @@ export class PrismaEmployeeRepository implements EmployeeRepository {
         return {
           icon: SupportedAttachments.Icon[ext],
           mimetype: SupportedAttachments.Mimetype[ext],
-          url: `${process.env.DOMAIN_NAME}:${process.env.PORT}/files/${attachment.filename}`,
+          url: `${Server.domain}:${Server.port}/files/${attachment.filename}`,
           filename: attachment.filename,
           title: attachment.filename
         }

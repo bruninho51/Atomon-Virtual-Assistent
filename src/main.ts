@@ -26,7 +26,6 @@ import { BotFrameworkSaveAttachment } from './infra/services/bot-framework-save-
     if (activity.attachments) {
       const attachmentSaver = new BotFrameworkSaveAttachment()
       for (const attachment of activity.attachments) {
-        console.dir(attachment)
         attachments.push({
           filename: await attachmentSaver.save(attachment),
           name: attachment.name,

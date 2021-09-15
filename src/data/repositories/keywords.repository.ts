@@ -7,7 +7,6 @@ export class LUISKeywordsRepository implements KeywordsRepository {
     const client = new TextAnalyticsClient(process.env.LUIS_ENDPOINT,  new AzureKeyCredential(process.env.LUIS_KEY));
     const result = await client.extractKeyPhrases([phrase])
     const keywords = result.map((document: any) => { 
-      console.log(document.keyPhrases)
       return document.keyPhrases.join(',')
     })
     return keywords

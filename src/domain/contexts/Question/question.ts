@@ -23,14 +23,14 @@ export class Question implements Context {
     return Intent.Question
   }
 
-  public async onActivity(_input: Input): Promise<Response> {
+  public async onActivity(input: Input): Promise<Response> {
 
     const client = new elasticsearch.Client({
       hosts: [Elasticsearch.url]
     });
 
-    const keywords = await this.keywordsRepository.getKeywords(_input.text)
-    const query = keywords.join(' ')
+    const keywords = await this.keywordsRepository.getKeywords(input.text)
+    const query = keywords.join(' ').normalize('NFD').replace(/[\u0300-\u036f]/g, "")
 
     const { hits }: any = await client.search({
       index: 'atomon',
@@ -58,7 +58,6 @@ export class Question implements Context {
     }
 
     const $this = this
-    console.dir(hits.hits, { depth: null })
 
     const messages = []
     for (const hit of hits.hits) {
@@ -71,7 +70,7 @@ export class Question implements Context {
           body: hit._source.knowledge,
           attachments: await Promise.all(hit._source.attachments?.map(filename => {
           // obter attachment via repositório
-            return this.employeeRepository.getAttachmentByFilename(_input.employeeId, filename)
+            return this.employeeRepository.getAttachmentByFilename(input.employeeId, filename)
           }) ?? [])
         },
       })

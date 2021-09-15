@@ -84,8 +84,6 @@ export class TeamsAmqpWatcher implements MessageReader {
             intent: message.context.getIntent()
           }) as Conversation)
 
-          console.dir(conversations, { depth: null })
-
           await this.employeeRepository.saveConversations(employee.id, conversations)
         } else {
           const conversations = messages.map(message => ({

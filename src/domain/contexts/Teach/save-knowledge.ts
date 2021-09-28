@@ -48,6 +48,7 @@ export class SaveKnowledge implements Context {
         body: {
           title,
           knowledge,
+          employeeId: input.employeeId,
           attachments: attachments.map(
             attachment => attachment.filename)
         }

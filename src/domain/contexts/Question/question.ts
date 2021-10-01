@@ -1,18 +1,17 @@
 import { Context, Response, Input } from '../../contracts/chatbot.interface';
 import { Contexts } from '../../enums/contexts.enum';
 import { createMessage } from '../../hooks/create-message.hook';
-import * as elasticsearch from 'elasticsearch'
-import { Elasticsearch } from '../../../config/config';
 import { createSimpleCardMessages } from '../../hooks/create-messages.hook';
 import { Intent } from '../../enums/intent.enum';
-import { EmployeeRepository } from '../../contracts/employee-repository.interface';
 import { KeywordsRepository } from '../../contracts/keywords.repository';
+import { GetKnowledgeRepository } from '../../contracts/get-knowledge-repository.interface';
+import { Knowledge } from '../../models/knowledge';
 
 export class Question implements Context {
   constructor (
     private readonly contextCode: Contexts,
-    private readonly employeeRepository: EmployeeRepository,
     private readonly keywordsRepository: KeywordsRepository,
+    private readonly getKnowledgeRepository: GetKnowledgeRepository,
   ) {}
 
   getContextCode (): number {
@@ -24,31 +23,10 @@ export class Question implements Context {
   }
 
   public async onActivity(input: Input): Promise<Response> {
-
-    const client = new elasticsearch.Client({
-      hosts: [Elasticsearch.url]
-    });
-
     const keywords = await this.keywordsRepository.getKeywords(input.text)
-    const query = keywords.join(' ').normalize('NFD').replace(/[\u0300-\u036f]/g, "")
+    const knowledges: Knowledge[] = await this.getKnowledgeRepository.get(keywords, input.employeeId)
 
-    const { hits }: any = await client.search({
-      index: 'atomon',
-      type: 'knowledge',
-      body: {
-        query: {
-          multi_match: {
-            query,
-            operator: 'and',
-            fuzziness: "AUTO",
-            analyzer: "atomon_analyzer",
-            fields: ["knowledge", "title"]
-          },
-        }
-      }
-    })
-    
-    if (hits.total.value === 0) {
+    if (!knowledges) {
       return createMessage({
         context: this,
         message: 'Sinto muito, não sei de nada sobre esse assunto.',
@@ -57,25 +35,16 @@ export class Question implements Context {
       })
     }
 
-    const $this = this
-
     const messages = []
-    for (const hit of hits.hits) {
+    for (const knowledge of knowledges) {
       messages.push({
-        context: $this,
+        context: this,
         delay: 0,
         fowardTo: Contexts.Main,
-        message: {
-          title: hit._source.title,
-          body: hit._source.knowledge,
-          attachments: await Promise.all(hit._source.attachments?.map(filename => {
-          // obter attachment via repositório
-            return this.employeeRepository.getAttachmentByFilename(input.employeeId, filename)
-          }) ?? [])
-        },
+        message: knowledge,
       })
     }
-
+    
     return createSimpleCardMessages(messages)
   }
 

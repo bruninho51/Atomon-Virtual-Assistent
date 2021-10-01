@@ -1,11 +1,11 @@
 import { Attachment } from "botbuilder";
 import { Attachment as AttachmentModel } from "../../domain/models/attachment"
 import { Message } from "../../domain/contracts/chatbot.interface";
-import { SimpleCard } from "../../domain/models/simple-card-message";
+import { Knowledge } from "../../domain/models/knowledge";
 import { S3 } from "../../config/config";
 
-export const createSimpleCard = async (message: Message<SimpleCard>): Promise<Attachment> => {
-  return {
+export const createSimpleCard = async (message: Message<Knowledge>): Promise<Attachment> => {
+  const template = {
     "contentType": "application/vnd.microsoft.card.adaptive",
     "content": {
       "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
@@ -38,10 +38,14 @@ export const createSimpleCard = async (message: Message<SimpleCard>): Promise<At
         return {
           "type": "Action.OpenUrl",
           "url": attach.url,
-          "iconUrl": `${S3.assets}/${attach.icon}`,
+          "iconUrl": `${S3.assets}/icons/${attach.icon}`,
           "title": attach.title
         }
       })
     },
   }
+
+  console.dir(template, { depth: null })
+
+  return template
 }

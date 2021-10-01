@@ -1,12 +1,12 @@
 import { Response, Speak } from "../contracts/chatbot.interface"
 import { CardType } from "../enums/card-type.enum"
-import { SimpleCard } from "../models/simple-card-message"
+import { Knowledge } from "../models/knowledge"
 
 export const createMessages = (message: Speak, ...rest: Speak[]): Response => {
   return [...rest, message]
 }
 
-export const createSimpleCardMessages = (messages: Speak<SimpleCard>[]): Response => {
+export const createSimpleCardMessages = (messages: Speak<Knowledge>[]): Response => {
   return messages.map((message): Speak => ({
     context: message.context,
     delay: message.delay,

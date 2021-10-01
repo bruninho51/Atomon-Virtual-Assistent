@@ -1,6 +1,6 @@
 import { Attachment } from "./attachment";
 
-export type SimpleCard = {
+export type Knowledge = {
   title: string
   body: string
   attachments: Attachment[]

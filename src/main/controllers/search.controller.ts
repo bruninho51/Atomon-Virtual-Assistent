@@ -12,14 +12,16 @@ export default async (req: express.Request, res: express.Response): Promise<expr
 
   const { sentence, employeeId } = req.query
 
-  if (!isInt(employeeId)) {
-    return res.status(400).end('employeeId must be a integer.')
-  }
-
-  if (isInt(employeeId)) {
-    const employee = await employeeRepository.findById(parseInt(employeeId as unknown as string))
-    if (!employee) {
-      return res.status(400).end('employee not found.')
+  if (employeeId) {
+    if (!isInt(employeeId)) {
+      return res.status(400).end('employeeId must be a integer.')
+    }
+  
+    if (isInt(employeeId)) {
+      const employee = await employeeRepository.findById(parseInt(employeeId as unknown as string))
+      if (!employee) {
+        return res.status(400).end('employee not found.')
+      }
     }
   }
 
@@ -28,7 +30,7 @@ export default async (req: express.Request, res: express.Response): Promise<expr
   }
   
   const keywords = await keywordRepository.getKeywords(sentence as string)
-  const knowledges: Knowledge[] = await getKnowledgeRepository.get(keywords, Number(employeeId))
+  const knowledges: Knowledge[] = await getKnowledgeRepository.get(keywords, employeeId ? Number(employeeId) : null)
 
   res.send(knowledges ?? [])
 }

@@ -7,16 +7,14 @@ import { EmployeeRepository } from "../../domain/contracts/employee-repository.i
 export class ElasticsearchGetKnowledgeRepository implements GetKnowledgeRepository {
   constructor (private readonly employeeRepository: EmployeeRepository) {}
     
-  async get (keywords: string[], employeeId: number): Promise<Knowledge[]> {
+  async get (keywords: string[], employeeId?: number): Promise<Knowledge[]> {
     const client = new elasticsearch.Client({
       hosts: [Elasticsearch.url]
     });
 
-    const { hits }: any = await client.search({
-      index: 'atomon',
-      type: 'knowledge',
-      body: {
-        query: {
+    const query = {
+      bool: {
+        must: {
           multi_match: {
             query: keywords.join(' ').normalize('NFD').replace(/[\u0300-\u036f]/g, ""),
             operator: 'and',
@@ -24,7 +22,21 @@ export class ElasticsearchGetKnowledgeRepository implements GetKnowledgeReposito
             analyzer: "atomon_analyzer",
             fields: ["knowledge", "title"]
           },
-        }
+        },
+      }
+    }
+
+    if (employeeId) {
+      query.bool['filter'] = {
+        term: { employeeId }
+      }
+    }
+
+    const { hits }: any = await client.search({
+      index: 'atomon',
+      type: 'knowledge',
+      body: {
+        query
       }
     })
 
@@ -35,9 +47,10 @@ export class ElasticsearchGetKnowledgeRepository implements GetKnowledgeReposito
         knowledges.push({
           title: hit._source.title,
           body: hit._source.knowledge,
+          employeeId: hit._source.employeeId,
           attachments: await Promise.all(hit._source.attachments?.map((filename: string) => {
             // obter attachment via repositório
-            return this.employeeRepository.getAttachmentByFilename(employeeId, filename)
+            return this.employeeRepository.getAttachmentByFilename(hit._source.employeeId, filename)
           }) ?? [])
         })
       }

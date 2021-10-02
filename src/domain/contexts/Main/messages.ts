@@ -13,14 +13,24 @@ const onQuestion: Omit<Foward, 'context'> = {
   delay: 0
 }
 
-const onInvalidOption: Omit<Failure, 'context'> = {
+const onShowLevel: Omit<Foward, 'context'> = {
+  message: 'Ok',
+  fowardTo: Contexts.ShowLevel,
+  delay: 0
+}
+
+const onInvalidOption: Array<Omit<Failure, 'context'>> = [{
   message: 'Opção inválida!',
   delay: 0,
   error: new Error('Opção inválida!')
-}
+}, {
+  message: '<br>Você deseja: <br>1 - Ensinar <br>2 - Perguntar<br>3 - Minha Pontuação<br>Digite o número da opção correspondente',
+  delay: 0,
+  error: new Error('Opção Inválida!')
+}]
 
 const onInit: Omit<Message, 'context'> = {
-  message: 'Você deseja (1 - ensinar) ou (2 - perguntar)?',
+  message: 'Você deseja: <br>1 - Ensinar <br>2 - Perguntar<br>3 - Minha Pontuação<br>Digite o número da opção correspondente',
   delay: 0 
 }
 
@@ -28,7 +38,8 @@ export default {
   onActivity: {
     onTeach,
     onQuestion,
-    onInvalidOption
+    onInvalidOption,
+    onShowLevel
   },
   onInit,
 };

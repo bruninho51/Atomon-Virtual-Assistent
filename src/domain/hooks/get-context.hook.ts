@@ -11,6 +11,7 @@ import { Attachment } from "../contexts/Teach/attachment";
 import { SaveKnowledge } from "../contexts/Teach/save-knowledge";
 import { makeLUISKeywordRepository } from "../../main/factories/repositories/luis-keyword-repository.factory";
 import { makeElasticsearchGetKnowledgeRepository } from "../../main/factories/repositories/elasticsearch-get-knowledge-repository.factory";
+import { Level } from "../contexts/Level/level";
 
 export const getContext = async (context: Contexts): Promise<Context> => {
 
@@ -27,6 +28,7 @@ export const getContext = async (context: Contexts): Promise<Context> => {
     [Contexts.AskAttachment]: new AskAttachment(Contexts.AskAttachment),
     [Contexts.Attachment]: new Attachment(Contexts.Attachment),
     [Contexts.SaveKnowledge]: new SaveKnowledge(Contexts.SaveKnowledge, employeeRepository),
+    [Contexts.ShowLevel]: new Level(Contexts.ShowLevel, employeeRepository),
   };
 
   return contexts[context];

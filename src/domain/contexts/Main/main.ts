@@ -24,8 +24,24 @@ export class Main implements Context {
       case 2:
         message = createMessage({ ...MainMessages.onActivity.onQuestion, context: this })
         break;
+      case 3:
+        message = createMessage({ ...MainMessages.onActivity.onShowLevel, context: this })
+        break;
       default:
-        message = createMessage({ ...MainMessages.onActivity.onInvalidOption, context: this })
+        message = [
+          {
+            context: this,
+            message: 'Opção inválida!',
+            delay: 0,
+            error: new Error('Opção inválida!')
+          },
+          {
+            context: this,
+            message: 'Você deseja: <br>1 - Ensinar <br>2 - Perguntar<br>3 - Minha Pontuação<br>Digite o número da opção correspondente',
+            delay: 0,
+            error: new Error('Opção Inválida!')
+          }
+        ]
     }
 
     return message

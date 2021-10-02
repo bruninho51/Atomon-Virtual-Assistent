@@ -22,7 +22,8 @@ export class PrismaEmployeeRepository implements EmployeeRepository {
       include: {
         employeeToken: true,
         tenant: true,
-        conversation: true
+        conversation: true,
+        level: true,
       }
     })
   }
@@ -138,7 +139,7 @@ export class PrismaEmployeeRepository implements EmployeeRepository {
     
     const result = await prisma.conversation.create({
       include: { employee: {
-        include: { conversation: true, tenant: true }
+        include: { conversation: true, tenant: true, level: true }
       } },
       data: {
         answer: conversation.answer,
@@ -194,7 +195,7 @@ export class PrismaEmployeeRepository implements EmployeeRepository {
 
     try {
       const employee = await prisma.employee.findFirst({
-        include: { conversation: true, employeeToken: true, tenant: true },
+        include: { conversation: true, employeeToken: true, tenant: true, level: true },
         where: {
           code: code ? code : 0
         },
@@ -224,7 +225,7 @@ export class PrismaEmployeeRepository implements EmployeeRepository {
 
     try {
       const employee = await prisma.employee.findFirst({
-        include: { conversation: true, employeeToken: true, tenant: true },
+        include: { conversation: true, employeeToken: true, tenant: true, level: true },
         where: {
           employeeToken: {
             some: { token, name }

@@ -49,6 +49,7 @@ export class SaveKnowledge implements Context {
           title,
           knowledge,
           employeeId: input.employeeId,
+          createdAt: Math.floor(Date.now() / 1000),
           attachments: attachments.map(
             attachment => attachment.filename)
         }

@@ -7,4 +7,5 @@ export enum Contexts {
   AskAttachment = 5,
   Attachment = 6,
   SaveKnowledge = 7,
+  ShowLevel = 8,
 }

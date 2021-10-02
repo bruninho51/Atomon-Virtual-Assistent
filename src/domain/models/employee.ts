@@ -1,4 +1,5 @@
 import { Conversation } from "./conversation";
+import { Level } from "./level";
 import { Tenant } from "./tenant";
 
 export type Employee = {
@@ -9,5 +10,6 @@ export type Employee = {
     score: number
     code: number
     conversation: Conversation[]
+    level: Level
     tenant: Tenant
 }

@@ -3,6 +3,8 @@ import { Knowledge } from "../../domain/models/knowledge";
 import * as elasticsearch from 'elasticsearch'
 import { Elasticsearch } from "../../config/config";
 import { EmployeeRepository } from "../../domain/contracts/employee-repository.interface";
+import { Employee } from "../../domain/models/employee";
+import { Level } from ".prisma/client";
 
 export class ElasticsearchGetKnowledgeRepository implements GetKnowledgeRepository {
   constructor (private readonly employeeRepository: EmployeeRepository) {}
@@ -44,13 +46,18 @@ export class ElasticsearchGetKnowledgeRepository implements GetKnowledgeReposito
 
     if (hits.total.value !== 0) {
       for (const hit of hits.hits) {
+        const data = hit._source
+        const employee = await this.employeeRepository.findById(data.employeeId) as Employee & { level: Level }
         knowledges.push({
-          title: hit._source.title,
-          body: hit._source.knowledge,
-          employeeId: hit._source.employeeId,
-          attachments: await Promise.all(hit._source.attachments?.map((filename: string) => {
+          title: data.title,
+          body: data.knowledge,
+          employeeId: data.employeeId,
+          employeeName: employee.name,
+          levelName: employee.level.name,
+          createdAt: data.createdAt ? new Date(data.createdAt * 1000) : null,
+          attachments: await Promise.all(data.attachments?.map((filename: string) => {
             // obter attachment via repositório
-            return this.employeeRepository.getAttachmentByFilename(hit._source.employeeId, filename)
+            return this.employeeRepository.getAttachmentByFilename(data.employeeId, filename)
           }) ?? [])
         })
       }

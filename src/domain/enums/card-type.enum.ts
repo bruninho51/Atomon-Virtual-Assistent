@@ -1,3 +1,4 @@
 export enum CardType {
-  simple = 'SIMPLE'
+  simple = 'SIMPLE',
+  trophy = 'TROPHY'
 }

@@ -26,6 +26,15 @@ export class Level implements Context {
 
     const employee = await this.employeeRepository.findById(input.employeeId)
 
+    /*return createTrophyCardMessage({
+      context: this,
+      message: {
+        value: 'Parabéns! Você subiu de nível e agora é um RECRUTA'
+      },
+      fowardTo: Contexts.Main,
+      delay: 0
+    })*/
+
     return createMessage({
       context: this,
       message: `Seu nível é ${employee.level.name} e você possui ${employee.score} pontos.`,

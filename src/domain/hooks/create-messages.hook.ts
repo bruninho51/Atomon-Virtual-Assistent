@@ -16,3 +16,13 @@ export const createSimpleCardMessages = (messages: Speak<Knowledge>[]): Response
     cardType: CardType.simple
   }))
 }
+
+export const createTrophyCardMessage = (message: Speak<{ value: string }>): Response => {
+  return [{
+    context: message.context,
+    delay: message.delay,
+    fowardTo: message['fowardTo'],
+    message: message.message,
+    cardType: CardType.trophy
+  }]
+}

@@ -8,4 +8,5 @@ export enum Contexts {
   Attachment = 6,
   SaveKnowledge = 7,
   ShowLevel = 8,
+  LevelUp = 9
 }

@@ -9,9 +9,36 @@ import { Attachment } from "../../domain/models/attachment"
 import { SupportedAttachments } from "../../domain/enums/supported-attachments"
 import * as path from "path"
 import { Server } from "../../config/config"
+import { Level } from "../../domain/models/level"
 
 export class PrismaEmployeeRepository implements EmployeeRepository {
   constructor (private readonly prismaProvider: PrismaProvider) {}
+  
+  async reloadLevel (employee: Employee): Promise<Level> {
+    const prisma = await this.prismaProvider.getConnection()
+    const level = await prisma.level.findFirst({
+      where: {
+        score: {
+          lte: employee.score
+        }
+      },
+      orderBy: {
+        score: 'desc'
+      }
+    })
+    const result = await prisma.employee.update({
+      include: { level: true },
+      where: {
+        id: employee.id,
+      },
+      data: {
+        levelId: level.id
+      }
+    })
+
+    return result.level
+  }
+
   async findById (employeeId: number): Promise<Employee> {
     const prisma = await this.prismaProvider.getConnection()
 
@@ -28,9 +55,10 @@ export class PrismaEmployeeRepository implements EmployeeRepository {
     })
   }
 
-  async sumScore (employeeId: number, score: number): Promise<void> {
+  async sumScore (employeeId: number, score: number): Promise<Employee> {
     const prisma = await this.prismaProvider.getConnection()
-    await prisma.employee.update({
+    const employee = await prisma.employee.update({
+      include: { conversation: true, tenant: true, level: true },
       where: {
         id: employeeId,
       },
@@ -40,6 +68,8 @@ export class PrismaEmployeeRepository implements EmployeeRepository {
         }
       }
     })
+
+    return employee
   }
 
   async getAttachmentByFilename (employeeId: number, filename: string): Promise<Attachment> {

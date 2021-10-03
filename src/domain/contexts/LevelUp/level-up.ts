@@ -3,8 +3,9 @@ import { Contexts } from '../../enums/contexts.enum';
 import { createMessage } from '../../hooks/create-message.hook';
 import { Intent } from '../../enums/intent.enum';
 import { EmployeeRepository } from '../../contracts/employee-repository.interface';
+import { createTrophyCardMessage } from '../../hooks/create-messages.hook';
 
-export class Level implements Context {
+export class LevelUp implements Context {
   constructor (
     private readonly contextCode: Contexts,
     private readonly employeeRepository: EmployeeRepository,
@@ -15,31 +16,28 @@ export class Level implements Context {
   }
 
   getIntent (): Intent {
-    return Intent.Question
+    return Intent.LevelUp
   }
 
   public async onActivity(_input: Input): Promise<Response> { 
-    return null
+    return createMessage({
+      context: this,
+      message: ':)',
+      fowardTo: Contexts.Main,
+      delay: 0
+    })
   }
 
   public async onInit(input: Input): Promise<Response> {
-
     const employee = await this.employeeRepository.findById(input.employeeId)
 
-    /*return createTrophyCardMessage({
+    return createTrophyCardMessage({
       context: this,
       message: {
-        value: 'Parabéns! Você subiu de nível e agora é um RECRUTA'
+        value: `Parabéns! Você subiu de nível e agora é um(a) ${employee.level.name}`
       },
       fowardTo: Contexts.Main,
       delay: 0
-    })*/
-
-    return createMessage({
-      context: this,
-      message: `Seu nível é ${employee.level.name} e você possui ${employee.score} pontos.`,
-      fowardTo: Contexts.Main,
-      delay: 0,
     })
   }
 

@@ -29,6 +29,15 @@ export class ChatbotEngineService {
             const nextNextContext = await getContext(foward2.fowardTo);
             const initReply = await nextNextContext.onInit(input);
             resultContexts = resultContexts.concat(initReply);
+
+            const foward3 = initReply.find((message: Speak) => !!message['fowardTo']) as Foward;
+            if (foward3) {
+              const finishReply = await nextContext.onFinish(input);
+              resultContexts = resultContexts.concat(finishReply);
+              const nextNextContext = await getContext(foward3.fowardTo);
+              const initReply = await nextNextContext.onInit(input);
+              resultContexts = resultContexts.concat(initReply);
+            }
           }
         }
       }

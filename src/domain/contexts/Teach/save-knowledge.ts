@@ -63,15 +63,22 @@ export class SaveKnowledge implements Context {
       })
     }
 
+    let nextContext: Contexts = Contexts.Main
+
     const employee = await this.employeeRepository
       .findById(input.employeeId)
 
-    await this.employeeRepository
+    const updatedEmployee = await this.employeeRepository
       .sumScore(employee.id, employee.tenant.score)
+
+    const level = await this.employeeRepository.reloadLevel(updatedEmployee)
+    if (level.id !== updatedEmployee.level.id) {
+      nextContext = Contexts.LevelUp
+    }
 
     return createMessage({
       context: this,
-      fowardTo: Contexts.Main,
+      fowardTo: nextContext,
       message: `Conhecimento salvo! Você ganhou ${employee.tenant.score} pontos.`,
       delay: 0,
     })

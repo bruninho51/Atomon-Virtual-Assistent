@@ -1,6 +1,6 @@
-import { CardType } from "../enums/card-type.enum"
-import { Client } from "../enums/client.enum"
-import { Attachment } from "../models/attachment"
+import { CardType } from "@/domain/enums/card-type.enum"
+import { Client } from "@/domain/enums/client.enum"
+import { Attachment } from "@/domain/models/attachment"
 
 export type Message<T = unknown> = {
   message: T

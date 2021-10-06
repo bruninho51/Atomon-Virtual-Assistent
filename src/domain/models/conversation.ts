@@ -1,4 +1,4 @@
-import { Attachment } from "./attachment";
+import { Attachment } from "@/domain/models/attachment";
 
 export interface Conversation {
     id: number;

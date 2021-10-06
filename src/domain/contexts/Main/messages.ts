@@ -1,5 +1,5 @@
-import { Failure, Foward, Message } from "../../contracts/chatbot.interface";
-import { Contexts } from "../../enums/contexts.enum";
+import { Failure, Foward, Message } from "@/domain/contracts/chatbot.interface";
+import { Contexts } from "@/domain/enums/contexts.enum";
 
 const onTeach: Omit<Foward, 'context'> = {
   message: 'Preciso de algumas informações...',

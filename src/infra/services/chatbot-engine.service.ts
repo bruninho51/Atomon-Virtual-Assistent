@@ -1,15 +1,17 @@
-import { Input, Speak, Foward, Response } from "../../domain/contracts/chatbot.interface";
-import { getContext } from "../../domain/hooks/get-context.hook";
-import { Conversation } from "../../domain/models/conversation";
+import { Input, Speak, Foward, Response, Context } from "@/domain/contracts/chatbot.interface";
+import { Contexts } from "@/domain/enums/contexts.enum";
+import { Conversation } from "@/domain/models/conversation";
 
 export class ChatbotEngineService {
+  constructor (private readonly getContext: (context: Contexts) => Promise<Context>) {}
+
   public async execute (input: Input, conversation?: Conversation): Promise<Response> {
     let resultContexts: Response = [];
     const currentContextCode: number = conversation?.context ?? 0;
     const alreadyStarted: boolean = conversation?.isStarted ?? false;
   
     if (alreadyStarted) {
-      const currentContext = await getContext(currentContextCode);
+      const currentContext = await this.getContext(currentContextCode);
       const reply = await currentContext.onActivity(input);
       if (reply) {
         resultContexts = resultContexts.concat(reply)
@@ -17,7 +19,7 @@ export class ChatbotEngineService {
         if (foward) {
           const finishReply = await currentContext.onFinish(input);
           resultContexts = resultContexts.concat(finishReply);
-          const nextContext = await getContext(foward.fowardTo);
+          const nextContext = await this.getContext(foward.fowardTo);
           const initReply = await nextContext.onInit(input);
           resultContexts = resultContexts.concat(initReply);
 
@@ -26,7 +28,7 @@ export class ChatbotEngineService {
           if (foward2) {
             const finishReply = await nextContext.onFinish(input);
             resultContexts = resultContexts.concat(finishReply);
-            const nextNextContext = await getContext(foward2.fowardTo);
+            const nextNextContext = await this.getContext(foward2.fowardTo);
             const initReply = await nextNextContext.onInit(input);
             resultContexts = resultContexts.concat(initReply);
 
@@ -34,7 +36,7 @@ export class ChatbotEngineService {
             if (foward3) {
               const finishReply = await nextContext.onFinish(input);
               resultContexts = resultContexts.concat(finishReply);
-              const nextNextContext = await getContext(foward3.fowardTo);
+              const nextNextContext = await this.getContext(foward3.fowardTo);
               const initReply = await nextNextContext.onInit(input);
               resultContexts = resultContexts.concat(initReply);
             }
@@ -42,7 +44,7 @@ export class ChatbotEngineService {
         }
       }
     } else {
-      const context = await getContext(currentContextCode)
+      const context = await this.getContext(currentContextCode)
       const initReply = await context.onInit(input);
       resultContexts = initReply;
     }

@@ -1,9 +1,10 @@
+import 'module-alias/register'
 import * as express from 'express'
-import { makeTeamsAmpqWacher } from './main/factories/services/teams-amqp-watcher.factory'
-import { Server } from './config/config'
-import messagesController from './main/controllers/messages.controller'
-import searchController from './main/controllers/search.controller'
-import { MessageReader } from './domain/contracts/message-reader.interface'
+import { makeTeamsAmpqWacher } from '@/main/factories/services/teams-amqp-watcher.factory'
+import { Server } from '@/config/config'
+import messagesController from '@/main/controllers/messages.controller'
+import searchController from '@/main/controllers/search.controller'
+import { MessageReader } from '@/domain/contracts/message-reader.interface'
 
 (async function main() {
   const app = express()

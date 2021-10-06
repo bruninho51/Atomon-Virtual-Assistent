@@ -1,8 +1,7 @@
 import { Attachment } from "botbuilder"
-import { Message } from "../../domain/contracts/chatbot.interface"
+import { Message } from "@/domain/contracts/chatbot.interface"
 
 export const createTrophyCard = async (message: Message<{ value: string }>): Promise<Attachment> => {
-  console.log(message)
   const template = {
     "contentType": "application/vnd.microsoft.card.adaptive",
     "content": {  

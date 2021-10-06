@@ -1,5 +1,5 @@
 import { BotFrameworkAdapter } from "botbuilder";
-import { BotFramework } from '../../config/config'
+import { BotFramework } from '@/config/config'
 
 export class BotFrameworkProvider {
   private static framework: BotFrameworkAdapter = null

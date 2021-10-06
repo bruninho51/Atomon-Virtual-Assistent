@@ -16,10 +16,13 @@
     "noUnusedParameters": true,
     "noImplicitAny": false,
     "noImplicitThis": false,
-    "strictNullChecks": false
+    "strictNullChecks": false,
+    "baseUrl": "src",
+    "paths":  {
+      "@/*": ["*"]
+    }
   },
   "include": [
-    "src/**/*",
-    "__tests__/**/*"
+    "src"
   ]
 }

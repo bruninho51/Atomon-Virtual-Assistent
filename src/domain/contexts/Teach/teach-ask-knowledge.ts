@@ -1,7 +1,7 @@
-import { Context, Response, Input } from '../../contracts/chatbot.interface';
-import { Contexts } from '../../enums/contexts.enum';
-import { Intent } from '../../enums/intent.enum';
-import { createMessage } from '../../hooks/create-message.hook';
+import { Context, Response, Input } from '@/domain/contracts/chatbot.interface';
+import { Contexts } from '@/domain/enums/contexts.enum';
+import { Intent } from '@/domain/enums/intent.enum';
+import { createMessage } from '@/domain/helpers/create-message';
 
 export class TeachAskKnowledge implements Context {
 

@@ -1,6 +1,6 @@
-import { Context, Response, Input } from '../../contracts/chatbot.interface';
-import { Intent } from '../../enums/intent.enum';
-import { createMessage } from '../../hooks/create-message.hook';
+import { Context, Response, Input } from '@/domain/contracts/chatbot.interface';
+import { Intent } from '@/domain/enums/intent.enum';
+import { createMessage } from '@/domain/helpers/create-message';
 import MainMessages from './messages';
 
 export class Main implements Context {

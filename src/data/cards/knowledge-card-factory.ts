@@ -1,10 +1,10 @@
 import { Attachment } from "botbuilder";
-import { Attachment as AttachmentModel } from "../../domain/models/attachment"
-import { Message } from "../../domain/contracts/chatbot.interface";
-import { Knowledge } from "../../domain/models/knowledge";
-import { S3 } from "../../config/config";
+import { Attachment as AttachmentModel } from "@/domain/models/attachment"
+import { Message } from "@/domain/contracts/chatbot.interface";
+import { Knowledge } from "@/domain/models/knowledge";
+import { S3 } from "@/config/config";
 
-export const createSimpleCard = async (message: Message<Knowledge>): Promise<Attachment> => {
+export const createKnowledgeCard = async (message: Message<Knowledge>): Promise<Attachment> => {
 
   const dt = message.message.createdAt
   const d = dt.getDate().toString().padStart(2, '0')
@@ -81,8 +81,6 @@ export const createSimpleCard = async (message: Message<Knowledge>): Promise<Att
       })
     },
   }
-
-  console.dir(template, { depth: null })
-
+  
   return template
 }

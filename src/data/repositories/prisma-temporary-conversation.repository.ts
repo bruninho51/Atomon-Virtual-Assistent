@@ -1,6 +1,6 @@
-import { PrismaProvider } from "../../infra/providers/prisma.provider"
-import { TemporaryConversation } from "../../domain/models/conversation"
-import { TemporaryConversationRepository } from "../../domain/contracts/temporary_conversation-repository.interface"
+import { PrismaProvider } from "@/infra/providers/prisma.provider"
+import { TemporaryConversation } from "@/domain/models/conversation"
+import { TemporaryConversationRepository } from "@/domain/contracts/temporary_conversation-repository.interface"
 
 export class PrismaTemporaryConversationRepository implements TemporaryConversationRepository {
   constructor (private readonly prismaProvider: PrismaProvider) {}

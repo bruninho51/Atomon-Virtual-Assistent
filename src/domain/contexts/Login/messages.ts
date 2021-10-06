@@ -1,5 +1,5 @@
-import { Failure, Foward, Message } from "../../contracts/chatbot.interface"
-import { Contexts } from "../../enums/contexts.enum"
+import { Failure, Foward, Message } from "@/domain/contracts/chatbot.interface"
+import { Contexts } from "@/domain/enums/contexts.enum"
 
 const onSuccess: Omit<Foward, 'context'> = {
   message: 'Ótimo, estou vinculando sua conta.',

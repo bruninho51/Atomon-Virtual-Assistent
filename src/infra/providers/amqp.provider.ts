@@ -1,5 +1,5 @@
 import { Connection, connect } from 'amqplib';
-import { RabbitMq } from '../../config/config';
+import { RabbitMq } from '@/config/config';
 
 export class AmqpProvider {
     private static connection: Connection = null

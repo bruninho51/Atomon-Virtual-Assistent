@@ -1,9 +1,9 @@
 import express from "express";
-import { Knowledge } from "../../domain/models/knowledge";
-import { isInt } from "../../helpers/is-int";
-import { makeElasticsearchGetKnowledgeRepository } from "../factories/repositories/elasticsearch-get-knowledge-repository.factory";
-import { makeLUISKeywordRepository } from "../factories/repositories/luis-keyword-repository.factory";
-import { makePrismaEmployeeRepository } from "../factories/repositories/prisma-employee-repository.factory";
+import { Knowledge } from "@/domain/models/knowledge";
+import { isInt } from "@/shared/is-int";
+import { makeElasticsearchGetKnowledgeRepository } from "@/main/factories/repositories/elasticsearch-get-knowledge-repository.factory";
+import { makeLUISKeywordRepository } from "@/main/factories/repositories/luis-keyword-repository.factory";
+import { makePrismaEmployeeRepository } from "@/main/factories/repositories/prisma-employee-repository.factory";
 
 export default async (req: express.Request, res: express.Response): Promise<express.Response | void> => {
   const getKnowledgeRepository = await makeElasticsearchGetKnowledgeRepository()

@@ -2,9 +2,9 @@ import { TurnContext } from "botbuilder-core";
 import { Activity } from "botframework-schema";
 import * as cuid from "cuid";
 import express from "express";
-import { RabbitMq } from "../../config/config";
-import { AmqpProvider } from "../../infra/providers/amqp.provider";
-import { BotFrameworkSaveAttachment } from "../../infra/services/bot-framework-save-attachment";
+import { RabbitMq } from "@/config/config";
+import { AmqpProvider } from "@/infra/providers/amqp.provider";
+import { BotFrameworkSaveAttachment } from "@/infra/services/bot-framework-save-attachment";
 
 export default async (req: express.Request, res: express.Response): Promise<express.Response | void> => {
   const activity = req.body as Activity;

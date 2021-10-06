@@ -1,12 +1,12 @@
-import { Context, Response, Input } from '../../contracts/chatbot.interface';
-import { EmployeeRepository } from '../../contracts/employee-repository.interface';
-import { Contexts } from '../../enums/contexts.enum';
-import { Elasticsearch } from '../../../config/config';
+import { Context, Response, Input } from '@/domain/contracts/chatbot.interface';
+import { EmployeeRepository } from '@/domain/contracts/employee-repository.interface';
+import { Contexts } from '@/domain/enums/contexts.enum';
+import { Elasticsearch } from '@/config/config';
 import * as elasticsearch from 'elasticsearch'
-import { createMessage } from '../../hooks/create-message.hook';
+import { createMessage } from '@/domain/helpers/create-message';
 import * as cuid from 'cuid';
-import { Intent } from '../../enums/intent.enum';
-import { Attachment } from '../../models/attachment';
+import { Intent } from '@/domain/enums/intent.enum';
+import { Attachment } from '@/domain/models/attachment';
 
 export class SaveKnowledge implements Context {
 

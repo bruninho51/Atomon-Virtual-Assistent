@@ -1,4 +1,4 @@
-import { Employee } from "./employee";
+import { Employee } from "@/domain/models/employee";
 
 export type EmployeeToken = {
 	id: number

@@ -1,18 +1,18 @@
+import { AmqpProvider } from '@/infra/providers/amqp.provider';
+import { BotFrameworkProvider } from '@/infra/providers/bot-framework.provider';
+import { RabbitMq, Server } from '@/config/config';
+import { Client } from '@/domain/enums/client.enum';
+import { MessageReader } from '@/domain/contracts/message-reader.interface';
+import { Conversation, TemporaryConversation } from '@/domain/models/conversation';
+import {  Message } from '@/domain/contracts/chatbot.interface';
+import { ChatbotEngineService } from '@/infra/services/chatbot-engine.service';
+import { EmployeeRepository } from '@/domain/contracts/employee-repository.interface';
+import { TemporaryConversationRepository } from '@/domain/contracts/temporary_conversation-repository.interface';
+import { CardBuilder } from '@/domain/contracts/card-builder.interface';
+import { SupportedAttachments } from '@/domain/enums/supported-attachments';
+import * as path from 'path'
 import { ConsumeMessage } from 'amqplib';
 import { Activity, ConversationReference, TurnContext } from 'botbuilder';
-import { AmqpProvider } from '../../providers/amqp.provider';
-import { BotFrameworkProvider } from '../../providers/bot-framework.provider';
-import { RabbitMq, Server } from '../../../config/config';
-import { Client } from '../../../domain/enums/client.enum';
-import { MessageReader } from '../../../domain/contracts/message-reader.interface';
-import { Conversation, TemporaryConversation } from '../../../domain/models/conversation';
-import {  Message } from '../../../domain/contracts/chatbot.interface';
-import { ChatbotEngineService } from '../chatbot-engine.service';
-import { EmployeeRepository } from '../../../domain/contracts/employee-repository.interface';
-import { TemporaryConversationRepository } from '../../../domain/contracts/temporary_conversation-repository.interface';
-import { CardBuilder } from '../../../domain/contracts/card-builder.interface';
-import { SupportedAttachments } from '../../../domain/enums/supported-attachments';
-import * as path from 'path'
 
 export class TeamsAmqpWatcher implements MessageReader {
   constructor (

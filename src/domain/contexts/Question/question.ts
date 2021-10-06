@@ -1,11 +1,11 @@
-import { Context, Response, Input } from '../../contracts/chatbot.interface';
-import { Contexts } from '../../enums/contexts.enum';
-import { createMessage } from '../../hooks/create-message.hook';
-import { createSimpleCardMessages } from '../../hooks/create-messages.hook';
-import { Intent } from '../../enums/intent.enum';
-import { KeywordsRepository } from '../../contracts/keywords.repository';
-import { GetKnowledgeRepository } from '../../contracts/get-knowledge-repository.interface';
-import { Knowledge } from '../../models/knowledge';
+import { Context, Response, Input } from '@/domain/contracts/chatbot.interface';
+import { Contexts } from '@/domain/enums/contexts.enum';
+import { createMessage } from '@/domain/helpers/create-message';
+import { createKnowledgeCardMessages } from '@/domain/helpers/create-messages';
+import { Intent } from '@/domain/enums/intent.enum';
+import { KeywordsRepository } from '@/domain/contracts/keywords.repository';
+import { GetKnowledgeRepository } from '@/domain/contracts/get-knowledge-repository.interface';
+import { Knowledge } from '@/domain/models/knowledge';
 
 export class Question implements Context {
   constructor (
@@ -45,7 +45,7 @@ export class Question implements Context {
       })
     }
     
-    return createSimpleCardMessages(messages)
+    return createKnowledgeCardMessages(messages)
   }
 
   public async onInit(): Promise<Response> {

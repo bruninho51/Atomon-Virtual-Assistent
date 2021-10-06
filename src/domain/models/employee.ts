@@ -1,6 +1,6 @@
-import { Conversation } from "./conversation";
-import { Level } from "./level";
-import { Tenant } from "./tenant";
+import { Conversation } from "@/domain/models/conversation";
+import { Level } from "@/domain/models/level";
+import { Tenant } from "@/domain/models/tenant";
 
 export type Employee = {
 	id: number

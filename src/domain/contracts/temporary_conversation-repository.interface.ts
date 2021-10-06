@@ -1,4 +1,4 @@
-import { TemporaryConversation } from "../models/conversation";
+import { TemporaryConversation } from "@/domain/models/conversation";
 
 export interface TemporaryConversationRepository {
   getLastConversationFrom: (from: string) => Promise<TemporaryConversation>

@@ -1,4 +1,4 @@
-import { Attachment } from "./attachment";
+import { Attachment } from "@/domain/models/attachment";
 
 export type Knowledge = {
   title: string

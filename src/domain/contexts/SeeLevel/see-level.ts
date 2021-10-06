@@ -1,8 +1,8 @@
-import { Context, Response, Input } from '../../contracts/chatbot.interface';
-import { Contexts } from '../../enums/contexts.enum';
-import { createMessage } from '../../hooks/create-message.hook';
-import { Intent } from '../../enums/intent.enum';
-import { EmployeeRepository } from '../../contracts/employee-repository.interface';
+import { Context, Response, Input } from '@/domain/contracts/chatbot.interface';
+import { Contexts } from '@/domain/enums/contexts.enum';
+import { createMessage } from '@/domain/helpers/create-message';
+import { Intent } from '@/domain/enums/intent.enum';
+import { EmployeeRepository } from '@/domain/contracts/employee-repository.interface';
 
 export class SeeLevel implements Context {
   constructor (

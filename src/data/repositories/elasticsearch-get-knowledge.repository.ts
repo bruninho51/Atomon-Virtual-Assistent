@@ -1,10 +1,10 @@
-import { GetKnowledgeRepository } from "../../domain/contracts/get-knowledge-repository.interface";
-import { Knowledge } from "../../domain/models/knowledge";
+import { GetKnowledgeRepository } from "@/domain/contracts/get-knowledge-repository.interface";
+import { Knowledge } from "@/domain/models/knowledge";
 import * as elasticsearch from 'elasticsearch'
-import { Elasticsearch } from "../../config/config";
-import { EmployeeRepository } from "../../domain/contracts/employee-repository.interface";
-import { Employee } from "../../domain/models/employee";
-import { Level } from ".prisma/client";
+import { Elasticsearch } from "@/config/config";
+import { EmployeeRepository } from "@/domain/contracts/employee-repository.interface";
+import { Employee } from "@/domain/models/employee";
+import { Level } from "@/domain/models/level";
 
 export class ElasticsearchGetKnowledgeRepository implements GetKnowledgeRepository {
   constructor (private readonly employeeRepository: EmployeeRepository) {}

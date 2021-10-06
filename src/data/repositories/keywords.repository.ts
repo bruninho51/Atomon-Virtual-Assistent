@@ -1,6 +1,6 @@
-import { KeywordsRepository } from "../../domain/contracts/keywords.repository";
+import { KeywordsRepository } from "@/domain/contracts/keywords.repository";
 import { TextAnalyticsClient, AzureKeyCredential } from "@azure/ai-text-analytics";
-import { LUIS } from "../../config/config";
+import { LUIS } from "@/config/config";
 
 export class LUISKeywordsRepository implements KeywordsRepository {
   async getKeywords (phrase: string): Promise<string[]> {

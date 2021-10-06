@@ -1,9 +1,9 @@
-import { Client } from "../enums/client.enum";
-import { Attachment } from "../models/attachment";
-import { Conversation } from "../models/conversation";
-import { Employee } from "../models/employee"
-import { EmployeeToken } from "../models/employee-token";
-import { Level } from "../models/level";
+import { Client } from "@/domain/enums/client.enum";
+import { Attachment } from "@/domain/models/attachment";
+import { Conversation } from "@/domain/models/conversation";
+import { Employee } from "@/domain/models/employee"
+import { EmployeeToken } from "@/domain/models/employee-token";
+import { Level } from "@/domain/models/level";
 
 export interface EmployeeRepository {
   findByCode: (code: number) => Promise<Employee>

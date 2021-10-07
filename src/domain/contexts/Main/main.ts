@@ -1,7 +1,7 @@
 import { Context, Response, Input } from '@/domain/contracts/chatbot.interface';
 import { Intent } from '@/domain/enums/intent.enum';
 import { createMessage } from '@/domain/helpers/create-message';
-import MainMessages from './messages';
+import messages from '@/domain/contexts/Main/messages';
 
 export class Main implements Context {
 
@@ -19,36 +19,24 @@ export class Main implements Context {
     let message = null
     switch (Number(input.text)) {
       case 1:
-        message = createMessage({ ...MainMessages.onActivity.onTeach, context: this })
+        message = createMessage(messages.onTeach(this))
         break;
       case 2:
-        message = createMessage({ ...MainMessages.onActivity.onQuestion, context: this })
+        message = createMessage(messages.onQuestion(this))
         break;
       case 3:
-        message = createMessage({ ...MainMessages.onActivity.onShowLevel, context: this })
+        message = createMessage(messages.onShowLevel(this))
         break;
       default:
-        message = [
-          {
-            context: this,
-            message: 'Opção inválida!',
-            delay: 0,
-            error: new Error('Opção inválida!')
-          },
-          {
-            context: this,
-            message: 'Você deseja: <br>1 - Ensinar <br>2 - Perguntar<br>3 - Minha Pontuação<br>Digite o número da opção correspondente',
-            delay: 0,
-            error: new Error('Opção Inválida!')
-          }
-        ]
+        message = messages.onInvalidOption(this)
+        
     }
 
     return message
   }
 
   public async onInit(): Promise<Response> {
-    return createMessage({ ...MainMessages.onInit, context: this })
+    return createMessage(messages.onInit(this))
   }
 
   public async onFinish(): Promise<Response> {

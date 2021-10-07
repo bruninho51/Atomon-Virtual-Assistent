@@ -7,11 +7,11 @@ import { S3 } from "@/config/config";
 export const createKnowledgeCard = async (message: Message<Knowledge>): Promise<Attachment> => {
 
   const dt = message.message.createdAt
-  const d = dt.getDate().toString().padStart(2, '0')
-  const m = (dt.getMonth() + 1).toString().padStart(2, '0')
-  const y = dt.getFullYear()
-  const hor = dt.getHours().toString().padStart(2, '0')
-  const min = dt.getMinutes().toString().padStart(2, '0')
+  const d = dt?.getDate().toString().padStart(2, '0')
+  const m = (dt?.getMonth() + 1).toString().padStart(2, '0')
+  const y = dt?.getFullYear()
+  const hor = dt?.getHours().toString().padStart(2, '0')
+  const min = dt?.getMinutes().toString().padStart(2, '0')
 
   const createdAt: string = dt ? `${d}/${m}/${y} ${hor}:${min}` : null
 

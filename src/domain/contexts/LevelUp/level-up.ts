@@ -4,6 +4,7 @@ import { createMessage } from '@/domain/helpers/create-message';
 import { Intent } from '@/domain/enums/intent.enum';
 import { EmployeeRepository } from '@/domain/contracts/employee-repository.interface';
 import { createTrophyCardMessage } from '@/domain/helpers/create-messages';
+import messages from '@/domain/contexts/LevelUp/messages'
 
 export class LevelUp implements Context {
   constructor (
@@ -20,25 +21,12 @@ export class LevelUp implements Context {
   }
 
   public async onActivity(_input: Input): Promise<Response> { 
-    return createMessage({
-      context: this,
-      message: ':)',
-      fowardTo: Contexts.Main,
-      delay: 0
-    })
+    return createMessage(null)
   }
 
   public async onInit(input: Input): Promise<Response> {
     const employee = await this.employeeRepository.findById(input.employeeId)
-
-    return createTrophyCardMessage({
-      context: this,
-      message: {
-        value: `Parabéns! Você subiu de nível e agora é um(a) ${employee.level.name}`
-      },
-      fowardTo: Contexts.Main,
-      delay: 0
-    })
+    return createTrophyCardMessage(messages.onLevelUp(this, employee.level.name))
   }
 
   public async onFinish(): Promise<Response> {

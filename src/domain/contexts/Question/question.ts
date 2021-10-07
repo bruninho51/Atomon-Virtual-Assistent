@@ -6,6 +6,7 @@ import { Intent } from '@/domain/enums/intent.enum';
 import { KeywordsRepository } from '@/domain/contracts/keywords.repository';
 import { GetKnowledgeRepository } from '@/domain/contracts/get-knowledge-repository.interface';
 import { Knowledge } from '@/domain/models/knowledge';
+import messages from '@/domain/contexts/Question/messages';
 
 export class Question implements Context {
   constructor (
@@ -27,17 +28,12 @@ export class Question implements Context {
     const knowledges: Knowledge[] = await this.getKnowledgeRepository.get(keywords, input.employeeId)
 
     if (!knowledges) {
-      return createMessage({
-        context: this,
-        message: 'Sinto muito, não sei de nada sobre esse assunto.',
-        fowardTo: Contexts.Main,
-        delay: 0,
-      })
+      return createMessage(messages.lackKnowledge(this))
     }
 
-    const messages = []
+    const speaks = []
     for (const knowledge of knowledges) {
-      messages.push({
+      speaks.push({
         context: this,
         delay: 0,
         fowardTo: Contexts.Main,
@@ -45,15 +41,11 @@ export class Question implements Context {
       })
     }
     
-    return createKnowledgeCardMessages(messages)
+    return createKnowledgeCardMessages(speaks)
   }
 
   public async onInit(): Promise<Response> {
-    return createMessage({
-      context: this,
-      message: 'Sobre o que deseja aprender?',
-      delay: 0,
-    })
+    return createMessage(messages.onInit(this))
   }
 
   public async onFinish(): Promise<Response> {

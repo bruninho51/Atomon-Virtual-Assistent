@@ -3,6 +3,7 @@ import { Contexts } from '@/domain/enums/contexts.enum';
 import { createMessage } from '@/domain/helpers/create-message';
 import { Intent } from '@/domain/enums/intent.enum';
 import { EmployeeRepository } from '@/domain/contracts/employee-repository.interface';
+import messages from '@/domain/contexts/SeeLevel/messages'
 
 export class SeeLevel implements Context {
   constructor (
@@ -24,13 +25,7 @@ export class SeeLevel implements Context {
 
   public async onInit(input: Input): Promise<Response> {
     const employee = await this.employeeRepository.findById(input.employeeId)
-
-    return createMessage({
-      context: this,
-      message: `Seu nível é ${employee.level.name} e você possui ${employee.score} pontos.`,
-      fowardTo: Contexts.Main,
-      delay: 0,
-    })
+    return createMessage(messages.seeLevel(this, employee.level.name, employee.score))
   }
 
   public async onFinish(): Promise<Response> {

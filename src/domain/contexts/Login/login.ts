@@ -4,7 +4,7 @@ import { Client } from '@/domain/enums/client.enum';
 import { Contexts } from '@/domain/enums/contexts.enum';
 import { Intent } from '@/domain/enums/intent.enum';
 import { createMessage } from '@/domain/helpers/create-message';
-import LoginMessages from './messages';
+import messages from '@/domain/contexts/Login/messages';
 
 export class Login implements Context {
   constructor (
@@ -24,16 +24,16 @@ export class Login implements Context {
     const employee = await this.employeeRepository.findByCode(Number(input.text))
     if (employee) {
       await this.employeeRepository.saveToken(employee.id, Client.teams, input.token)
-      return createMessage({ ...LoginMessages.onActivity.onSuccess, context: this })
+      return createMessage(messages.onLinked(this))
     }
-    return createMessage({ ...LoginMessages.onActivity.onFailed, context: this })
+    return createMessage(messages.onFailed(this))
   }
 
   public async onInit(): Promise<Response> {
-    return createMessage({ ...LoginMessages.onInit, context: this })
+    return createMessage(messages.onInit(this))
   }
 
   public async onFinish(): Promise<Response> {
-    return createMessage({ ...LoginMessages.onFinish, context: this })
+    return createMessage(messages.onFinish(this))
   }
 }

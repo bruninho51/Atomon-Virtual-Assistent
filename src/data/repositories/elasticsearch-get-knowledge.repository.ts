@@ -49,6 +49,7 @@ export class ElasticsearchGetKnowledgeRepository implements GetKnowledgeReposito
         const data = hit._source
         const employee = await this.employeeRepository.findById(data.employeeId) as Employee & { level: Level }
         knowledges.push({
+          id: hit._id,
           title: data.title,
           body: data.knowledge,
           employeeId: data.employeeId,

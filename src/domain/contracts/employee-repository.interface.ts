@@ -15,6 +15,7 @@ export interface EmployeeRepository {
   findConversationByCursor: (employeeId: number, cursor: number) => Promise<Conversation>
   getLastAttachments: (employeeId: number) => Promise<Attachment[]>
   getAttachmentByFilename: (employeeId: number, filename: string) => Promise<Attachment>
+  deleteAttachmentByFilename: (employeeId: number, filename: string) => Promise<void>
   sumScore: (employeeId: number, score: number) => Promise<Employee>
   findById: (employeeId: number) => Promise<Employee>
   reloadLevel: (employeeId: Employee) => Promise<Level>

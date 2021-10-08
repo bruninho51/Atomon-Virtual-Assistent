@@ -84,6 +84,21 @@ export class PrismaEmployeeRepository implements EmployeeRepository {
     })
 
     return attachment
+  } 
+
+  async deleteAttachmentByFilename (employeeId: number, filename: string): Promise<void> {
+    const prisma = await this.prismaProvider.getConnection()
+    await prisma.attachment.deleteMany({
+      where: {
+        conversation: {
+          employee: {
+            id: employeeId,
+          }
+        },
+        filename,
+      }
+    })
+
   }
 
   async getLastAttachments (employeeId: number): Promise<Attachment[]> {

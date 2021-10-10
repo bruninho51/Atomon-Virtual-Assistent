@@ -22,7 +22,7 @@ import { MessageReader } from '@/domain/contracts/message-reader.interface'
       app.get('/', async (_req, res) => res.end('Ok'))
       app.post('/api/messages', messagesController)
       app.get('/api/search', searchController)
-      app.delete('/api/delete/:knowledgeId', deleteKnowledgeController)
+      app.delete('/api/knowledge/:knowledgeId', deleteKnowledgeController)
     
       app.listen(Server.port, () => {
         console.log(`Example app listening at http://localhost:${Server.port}`)

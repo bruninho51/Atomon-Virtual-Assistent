@@ -75,7 +75,7 @@ export const createKnowledgeCard = async (message: Message<Knowledge>): Promise<
         return {
           "type": "Action.OpenUrl",
           "url": attach.url,
-          "iconUrl": `${S3.assets}/icons/${attach.icon}`,
+          "iconUrl": `${S3.assets}/icons/attachment.png`,
           "title": attach.title,
         }
       })

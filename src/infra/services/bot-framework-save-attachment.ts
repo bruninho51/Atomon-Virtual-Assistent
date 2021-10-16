@@ -6,7 +6,6 @@ import { extname } from 'path'
 
 export class BotFrameworkSaveAttachment {
   async save(attachment: Attachment): Promise<string> {
-    console.dir(attachment, { depth: null })
 
     // microsoft teams
     if (attachment.content) {

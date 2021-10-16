@@ -43,8 +43,8 @@ export class TeamsAmqpWatcher implements MessageReader {
         const attachments = attachs.map(attachment => {
           const ext = path.extname(attachment.filename).replace('.', '')
           return {
-            icon: SupportedAttachments.Icon[ext],
-            mimetype: SupportedAttachments.Mimetype[ext],
+            icon: SupportedAttachments.Icon[ext] ?? 'attachment.png',
+            mimetype: SupportedAttachments.Mimetype[ext] ?? 'application/unknown',
             url: `${Server.domain}:${Server.port}/files/${attachment.filename}`,
             filename: attachment.filename,
             title: attachment.name

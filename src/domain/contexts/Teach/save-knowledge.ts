@@ -1,12 +1,13 @@
 import { Context, Response, Input } from '@/domain/contracts/chatbot.interface';
 import { EmployeeRepository } from '@/domain/contracts/employee-repository.interface';
 import { Contexts } from '@/domain/enums/contexts.enum';
-import { Elasticsearch } from '@/config/config';
+import { Elasticsearch, Server } from '@/config/config';
 import * as elasticsearch from 'elasticsearch'
 import { createMessage } from '@/domain/helpers/create-message';
 import * as cuid from 'cuid';
 import { Intent } from '@/domain/enums/intent.enum';
 import { Attachment } from '@/domain/models/attachment';
+import { extname } from 'path';
 
 export class SaveKnowledge implements Context {
 
@@ -24,6 +25,9 @@ export class SaveKnowledge implements Context {
   }
 
   public async onActivity(input: Input): Promise<Response> {
+
+    const messages: Response = []
+
     const { getLastConversation } = this.employeeRepository
     const getConversation = getLastConversation.bind(this.employeeRepository)
 
@@ -40,6 +44,20 @@ export class SaveKnowledge implements Context {
       hosts: [Elasticsearch.url]
     });
 
+    const validAttachs: Attachment[] = attachments.filter((attach: Attachment) => {
+      const ext = extname(attach.filename)
+      return Server.acceptedAttachmentFileTypes.includes(ext)
+    })
+
+    if (validAttachs.length !== attachments.length) {
+      messages.push({
+        context: this,
+        error: new Error('Invalid attachment!'),
+        message: `Arquivos de extensão inválida seão ignorados. Extensões aceitas: ${Server.acceptedAttachmentFileTypes.join(', ')}`,
+        delay: 0,
+      })
+    }
+
     try {
       await client.create({
         index: 'atomon',
@@ -50,7 +68,7 @@ export class SaveKnowledge implements Context {
           knowledge,
           employeeId: input.employeeId,
           createdAt: Math.floor(Date.now() / 1000),
-          attachments: attachments.map(
+          attachments: validAttachs.map(
             attachment => attachment.filename)
         }
       })
@@ -76,12 +94,14 @@ export class SaveKnowledge implements Context {
       nextContext = Contexts.LevelUp
     }
 
-    return createMessage({
+    messages.push({
       context: this,
       fowardTo: nextContext,
       message: `Conhecimento salvo! Você ganhou ${employee.tenant.score} pontos.`,
       delay: 0,
     })
+
+    return messages
   }
 
   public async onInit(input: Input): Promise<Response> {

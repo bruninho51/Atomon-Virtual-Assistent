@@ -15,6 +15,10 @@ export namespace Server {
   export const port = Number(process.env.PORT || '8000')
   export const isDev = process.env.NODE_ENV === 'development'
   export const domain = process.env.DOMAIN_NAME
+
+  export const acceptedAttachmentFileTypes = [
+    '.png','.jpg','.jpeg','.xls','.xlsx','.pdf'
+  ]
 }
 
 export namespace BotFramework {

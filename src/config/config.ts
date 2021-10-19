@@ -17,7 +17,7 @@ export namespace Server {
   export const domain = process.env.DOMAIN_NAME
 
   export const acceptedAttachmentFileTypes = [
-    '.png','.jpg','.jpeg','.xls','.xlsx','.pdf'
+    '.png','.jpg','.jpeg','.xls','.xlsx','.pdf', '.txt', '.ppt', '.pptx', '.doc', '.docx'
   ]
 }
 

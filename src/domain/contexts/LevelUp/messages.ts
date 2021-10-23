@@ -14,7 +14,7 @@ const onLevelUp = (context: Context, levelName: string): Foward<{ value: string 
     message: {
       value: texts[getRandomInt(0, texts.length)]
     },
-    fowardTo: Contexts.TeachAskTitle,
+    fowardTo: Contexts.Main,
     delay: 0
   }
 }
